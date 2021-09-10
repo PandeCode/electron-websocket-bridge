@@ -1,5 +1,5 @@
 #define CROW_MAIN
-#include "crow.h"
+#include "crow/app.h"
 
 #include <atomic>
 #include <iostream>
@@ -27,24 +27,12 @@ int main(int, char**) {
 
 	CROW_ROUTE(app, "/")
 	([&]() {
-		return R"(
-Help:
-/command/disableRepeatOne
-/command/dislikeCurrent
-/command/enableRepeat
-/command/enableRepeatOne
-/command/isCurrentLiked
-/command/likeCurrent
-/command/next
-/command/pause
-/command/play
-/command/playPause
-/command/playState
-/command/previous
-/command/repeatStatus
-/command/toggleLikeCurrent
-/command/toggleShuffle
-)";
+		return "Help:\n/command/disableRepeatOne\n/command/dislikeCurrent\n/"
+		       "command/enableRepeat\n/command/enableRepeatOne\n/command/"
+		       "isCurrentLiked\n/command/likeCurrent\n/command/next\n/command/"
+		       "pause\n/command/play\n/command/playPause\n/command/playState\n/"
+		       "command/previous\n/command/repeatStatus\n/command/"
+		       "toggleLikeCurrent\n/command/toggleShuffle\n";
 	});
 
 	CROW_ROUTE(app, "/command/<string>")
@@ -89,9 +77,27 @@ Help:
 		    if(is_binary)
 			    std::cout << "Binary Data from '" << &conn << "': " << data
 				      << std::endl;
-		    else
-			    std::cout << "Data from ;" << &conn << "': " << data
+		    else {
+			    std::cout << "Data from '" << &conn << "': " << data
 				      << std::endl;
+
+			    if(data.substr(0, 10) == "playState:") {
+				    std::cout
+					<< "playState: " << data.substr(10, data.size())
+					<< std::endl;
+			    } else if(data.substr(0, 6) == "Error:") {
+				    std::cout << "Error: " << data.substr(6, data.size())
+					      << std::endl;
+			    } else if(data.substr(0, 15) == "isCurrentLiked:") {
+				    std::cout << "isCurrentLiked: "
+					      << data.substr(15, data.size())
+					      << std::endl;
+			    } else if(data.substr(0, 13) == "repeatStatus:") {
+				    std::cout << "repeatStatus: "
+					      << data.substr(13, data.size())
+					      << std::endl;
+			    }
+		    }
 	    });
 
 	CROW_ROUTE(app, "/client/main.js")
@@ -115,7 +121,6 @@ Help:
 		res.end();
 	});
 
-
 	CROW_ROUTE(app, "/client/ws")
 	    .websocket()
 	    .onopen([&](crow::websocket::connection& conn) {
@@ -134,7 +139,6 @@ Help:
 		    else {
 			    std::cout << "Data from ;" << &conn << "': " << data
 				      << std::endl;
-
 			    if(globalConn == nullptr) {
 				    conn.send_text("Error: player client not connnected");
 				    return;
