@@ -1,4 +1,4 @@
-const $ = document.querySelector.bind(document);
+let $ = document.querySelector.bind(document);
 
 const nextBtn = $("#nextBtn");
 const playBtn = $("#playBtn");
@@ -72,6 +72,7 @@ function activeWebSockets() {
 	ws.addEventListener("message", (event) => {
 		console.info("Message from server ", event.data);
 	});
+
 	nextBtn.addEventListener("click", () => {
 		ws.send("next");
 	});
@@ -122,47 +123,47 @@ function activeWebSockets() {
 const BASE_URL = "http://localhost:8080/command/";
 
 $("#nextRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "next");
+	fetch(BASE_URL + "next").then(d => console.log(d));
 });
 $("#playRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "play");
+	fetch(BASE_URL + "play").then(d => console.log(d));
 });
 $("#pauseRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "pause");
+	fetch(BASE_URL + "pause").then(d => console.log(d));
 });
 $("#previousRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "previous");
+	fetch(BASE_URL + "previous").then(d => console.log(d));
 });
 $("#playPauseRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "playPause");
+	fetch(BASE_URL + "playPause").then(d => console.log(d));
 });
 $("#playStateRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "playState");
+	fetch(BASE_URL + "playState").then(d => console.log(d));
 });
 $("#likeCurrentRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "likeCurrent");
+	fetch(BASE_URL + "likeCurrent").then(d => console.log(d));
 });
 $("#enableRepeatRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "enableRepeat");
+	fetch(BASE_URL + "enableRepeat").then(d => console.log(d));
 });
 $("#repeatStatusRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "repeatStatus");
+	fetch(BASE_URL + "repeatStatus").then(d => console.log(d));
 });
 $("#toggleShuffleRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "toggleShuffle");
+	fetch(BASE_URL + "toggleShuffle").then(d => console.log(d));
 });
 $("#dislikeCurrentRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "dislikeCurrent");
+	fetch(BASE_URL + "dislikeCurrent").then(d => console.log(d));
 });
 $("#isCurrentLikedRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "isCurrentLiked");
+	fetch(BASE_URL + "isCurrentLiked").then(d => console.log(d));
 });
 $("#enableRepeatOneRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "enableRepeatOne");
+	fetch(BASE_URL + "enableRepeatOne").then(d => console.log(d));
 });
 $("#disableRepeatOneRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "disableRepeatOne");
+	fetch(BASE_URL + "disableRepeatOne").then(d => console.log(d));
 });
 $("#toggleLikeCurrentRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "toggleLikeCurrent");
+	fetch(BASE_URL + "toggleLikeCurrent").then(d => console.log(d));
 });
