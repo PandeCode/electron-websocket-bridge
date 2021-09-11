@@ -1,25 +1,6 @@
 #define CROW_MAIN
 #define CROW_ENABLE_DEBUG
-#include "precompiled.hpp"
-
-//
-
-#include "Log.hpp"
-#include "crow/app.h"
-#include "crow/json.h"
-
-#include <atomic>
-#include <iostream>
-#include <string>
-#include <string_view>
-#include <thread>
-#include <vector>
-
-//
-
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "_precompiled.hpp"
 
 void my_handler(int s) {
 	std::cout << "Caught signal " << s << std::endl;
@@ -30,14 +11,17 @@ int main() {
 	auto data       = R"({"type":"command", "message":"play"})";
 
 	auto parsedData = crow::json::load(data);
-	//auto _type      = parsedData["type"];
-	//auto _message   = parsedData["message"];
+	std::cout << parsedData << std::endl;
+	auto _type = parsedData["type"];
+	std::cout << _type << std::endl;
+	auto _message = parsedData["message"];
+	std::cout << _message << std::endl;
 
-	//std::string type((char*) _type.begin(), (char*) _type.end());
-	//std::string message((char*) _message.begin(), (char*) _message.end());
+	std::string type(_type);
+	std::string message(_message);
 
-	//Log::Debug("type: ", type);
-	//Log::Debug("message: ", message);
+	Log::Debug("type: ", type);
+	Log::Debug("message: ", message);
 }
 #if 0
 int main(int, char**) {
