@@ -12,14 +12,14 @@ const SpotifyHackApi = {
 			)
 			.click(),
 
-	playState: () => {
+	getPlayState: () => {
 		return document.querySelector(
 			"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > button",
 		).title;
 	},
 
 	play: () => {
-		if (SpotifyHackApi.playState() == "Play")
+		if (SpotifyHackApi.getPlayState() == "Play")
 			document
 				.querySelector(
 					"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > button",
@@ -28,7 +28,7 @@ const SpotifyHackApi = {
 	},
 
 	pause: () => {
-		if (SpotifyHackApi.playState() == "Pause")
+		if (SpotifyHackApi.getPlayState() == "Pause")
 			document
 				.querySelector(
 					"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > button",
@@ -36,36 +36,36 @@ const SpotifyHackApi = {
 				.click();
 	},
 
-	repeatStatus: () => {
+	getRepeatStatus: () => {
 		return document.querySelector(".main-repeatButton-button").title;
 	},
 
 	enableRepeat: () => {
-		if (SpotifyHackApi.repeatStatus() == "Enable repeat")
+		if (SpotifyHackApi.getRepeatStatus() == "Enable repeat")
 			document.querySelector(".main-repeatButton-button").click();
-		else if (SpotifyHackApi.repeatStatus() == "Disable repeat") {
+		else if (SpotifyHackApi.getRepeatStatus() == "Disable repeat") {
 			document.querySelector(".main-repeatButton-button").click();
 			document.querySelector(".main-repeatButton-button").click();
 		}
 	},
 	enableRepeatOne: () => {
-		if (SpotifyHackApi.repeatStatus() == "Enable repeat one")
+		if (SpotifyHackApi.getRepeatStatus() == "Enable repeat one")
 			document.querySelector(".main-repeatButton-button").click();
-		else if (SpotifyHackApi.repeatStatus() == "Enable repeat") {
+		else if (SpotifyHackApi.getRepeatStatus() == "Enable repeat") {
 			document.querySelector(".main-repeatButton-button").click();
 			document.querySelector(".main-repeatButton-button").click();
 		}
 	},
 	disableRepeatOne: () => {
-		if (SpotifyHackApi.repeatStatus() == "Disable repeat")
+		if (SpotifyHackApi.getRepeatStatus() == "Disable repeat")
 			document.querySelector(".main-repeatButton-button").click();
-		else if (SpotifyHackApi.repeatStatus() == "Enable repeat one") {
+		else if (SpotifyHackApi.getRepeatStatus() == "Enable repeat one") {
 			document.querySelector(".main-repeatButton-button").click();
 			document.querySelector(".main-repeatButton-button").click();
 		}
 	},
 
-	isCurrentLiked: () => {
+	getIsCurrentLiked: () => {
 		switch (
 			document.querySelector(
 				"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > button",
@@ -92,7 +92,7 @@ const SpotifyHackApi = {
 			.click();
 	},
 	likeCurrent: () => {
-		if (!SpotifyHackApi.isCurrentLiked())
+		if (!SpotifyHackApi.getIsCurrentLiked())
 			document
 				.querySelector(
 					"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > button",
@@ -100,7 +100,7 @@ const SpotifyHackApi = {
 				.click();
 	},
 	dislikeCurrent: () => {
-		if (SpotifyHackApi.isCurrentLiked())
+		if (SpotifyHackApi.getIsCurrentLiked())
 			document
 				.querySelector(
 					"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > button",
