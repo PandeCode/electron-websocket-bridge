@@ -8,15 +8,15 @@ set(CMAKE_C_COMPILER /usr/bin/clang CACHE PATH "" FORCE)
 set(CMAKE_CXX_COMPILER /usr/bin/clang++ CACHE PATH "" FORCE)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument") # -v
 
-set(CMAKE_C_FLAGS_INIT                "-Wall")
-set(CMAKE_C_FLAGS_DEBUG_INIT          "-g")
-set(CMAKE_C_FLAGS_MINSIZEREL_INIT     "-Os -DNDEBUG")
-set(CMAKE_C_FLAGS_RELEASE_INIT        "-O3 -DNDEBUG")
+set(CMAKE_C_FLAGS_INIT "-Wall")
+set(CMAKE_C_FLAGS_DEBUG_INIT "-g")
+set(CMAKE_C_FLAGS_MINSIZEREL_INIT "-Os -DNDEBUG")
+set(CMAKE_C_FLAGS_RELEASE_INIT "-O3 -DNDEBUG")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO_INIT "-O2 -g")
-set(CMAKE_CXX_FLAGS_INIT                "-Wall")
-set(CMAKE_CXX_FLAGS_DEBUG_INIT          "-g")
-set(CMAKE_CXX_FLAGS_MINSIZEREL_INIT     "-Os -DNDEBUG")
-set(CMAKE_CXX_FLAGS_RELEASE_INIT        "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_INIT "-Wall")
+set(CMAKE_CXX_FLAGS_DEBUG_INIT "-g")
+set(CMAKE_CXX_FLAGS_MINSIZEREL_INIT "-Os -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT "-O2 -g")
 
 set(CMAKE_BUILD_TYPE Debug)
@@ -40,7 +40,15 @@ message("PROJECT_LIBRARIES      : " ${PROJECT_LIBRARIES})
 message("SRC_FILES              : " ${SRC_FILES})
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
-target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
-target_link_directories(${PROJECT_NAME} PUBLIC ${LINK_DIRS})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_LIBRARIES})
-target_compile_options(${PROJECT_NAME} PUBLIC -pthread)
+target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
+target_link_directories(${PROJECT_NAME} PRIVATE ${LINK_DIRS})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_LIBRARIES})
+target_compile_options(${PROJECT_NAME} PRIVATE -pthread)
+
+target_precompile_headers(
+  ${PROJECT_NAME} PUBLIC
+  <iostream>
+  <string>
+  <atomic>
+  <string_view>
+)

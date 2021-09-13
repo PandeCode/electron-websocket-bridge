@@ -1,116 +1,44 @@
+//@ts-check
+/// <reference path="./globals.d.ts" />
+//
 const SpotifyHackApi = {
-	next: () =>
-		document.querySelector(".main-skipForwardButton-button").click(),
-	previous: () =>
-		document.querySelector(".main-skipBackButton-button").click(),
-	toggleShuffle: () =>
-		document.querySelector(".main-shuffleButton-button").click(),
-	playPause: () =>
-		document
-			.querySelector(
-				"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > button",
-			)
-			.click(),
+	runCode: (/** @type {string} */ code) => eval(code),
+	next: () => Spicetify.Player.next(),
+	previous: () => Spicetify.Player.back(),
+	toggleShuffle: () => Spicetify.Player.toggleShuffle(),
+	shuffleOn: () => Spicetify.Player.setShuffle(true),
+	shuffleOff: () => Spicetify.Player.setShuffle(false),
+	playPause: () => Spicetify.Player.togglePlay(),
+	play: () => Spicetify.Player.play(),
+	pause: () => Spicetify.Player.pause(),
+	getRepeatStatus: () => Spicetify.Player.getRepeat(),
+	disableRepeat: () => Spicetify.Player.setRepeat(0),
+	enableRepeatAll: () => Spicetify.Player.setRepeat(1),
+	enableRepeat: () => Spicetify.Player.setRepeat(2),
 
-	getPlayState: () => {
-		return document.querySelector(
-			"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > button",
-		).title;
-	},
+	getIsCurrentLiked: () =>
+		document.querySelector(".main-addButton-button")?.ariaChecked ===
+		"true",
+	toggleLikeCurrent: () =>
+		// @ts-ignore
+		document.querySelector(".main-addButton-button")?.click(),
+	likeCurrent: () =>
+		SpotifyHackApi.getIsCurrentLiked() ||
+		SpotifyHackApi.toggleLikeCurrent(),
+	dislikeCurrent: () =>
+		SpotifyHackApi.getIsCurrentLiked() &&
+		SpotifyHackApi.toggleLikeCurrent(),
 
-	play: () => {
-		if (SpotifyHackApi.getPlayState() == "Play")
-			document
-				.querySelector(
-					"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > button",
-				)
-				.click();
-	},
-
-	pause: () => {
-		if (SpotifyHackApi.getPlayState() == "Pause")
-			document
-				.querySelector(
-					"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > button",
-				)
-				.click();
-	},
-
-	getRepeatStatus: () => {
-		return document.querySelector(".main-repeatButton-button").title;
-	},
-
-	enableRepeat: () => {
-		if (SpotifyHackApi.getRepeatStatus() == "Enable repeat")
-			document.querySelector(".main-repeatButton-button").click();
-		else if (SpotifyHackApi.getRepeatStatus() == "Disable repeat") {
-			document.querySelector(".main-repeatButton-button").click();
-			document.querySelector(".main-repeatButton-button").click();
-		}
-	},
-	enableRepeatOne: () => {
-		if (SpotifyHackApi.getRepeatStatus() == "Enable repeat one")
-			document.querySelector(".main-repeatButton-button").click();
-		else if (SpotifyHackApi.getRepeatStatus() == "Enable repeat") {
-			document.querySelector(".main-repeatButton-button").click();
-			document.querySelector(".main-repeatButton-button").click();
-		}
-	},
-	disableRepeatOne: () => {
-		if (SpotifyHackApi.getRepeatStatus() == "Disable repeat")
-			document.querySelector(".main-repeatButton-button").click();
-		else if (SpotifyHackApi.getRepeatStatus() == "Enable repeat one") {
-			document.querySelector(".main-repeatButton-button").click();
-			document.querySelector(".main-repeatButton-button").click();
-		}
-	},
-
-	getIsCurrentLiked: () => {
-		switch (
-			document.querySelector(
-				"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > button",
-			).title
-		) {
-			case "Remove from Your Library": {
-				return true;
-			}
-			case "Save to Your Library": {
-				return false;
-			}
-			default: {
-				console.error("Oh on");
-				return false;
-			}
-		}
-	},
-
-	toggleLikeCurrent: () => {
-		document
-			.querySelector(
-				"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > button",
-			)
-			.click();
-	},
-	likeCurrent: () => {
-		if (!SpotifyHackApi.getIsCurrentLiked())
-			document
-				.querySelector(
-					"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > button",
-				)
-				.click();
-	},
-	dislikeCurrent: () => {
-		if (SpotifyHackApi.getIsCurrentLiked())
-			document
-				.querySelector(
-					"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > button",
-				)
-				.click();
-	},
+	/** @type {WebSocket} */ ws: null,
 
 	startListening: () => {
+		//if (SpotifyHackApi.ws != null)
+		//if (SpotifyHackApi.ws.readyState != WebSocket.OPEN) {
 		let socketOpen = false;
-		const ws = new WebSocket("ws://localhost:8080/ws");
+
+		SpotifyHackApi.ws = new WebSocket("ws://localhost:8080/ws");
+		const ws = SpotifyHackApi.ws;
+
 		ws.addEventListener("open", (event) => {
 			socketOpen = true;
 			console.info("Hello Server!", event);
@@ -142,7 +70,15 @@ const SpotifyHackApi = {
 				console.error("Failed To parse server's message");
 				return;
 			}
-			if (parsedData.type == "command")
+			if (parsedData.type == "code") {
+				if (socketOpen)
+					ws.send(
+						`{"type": "code", "message": "${SpotifyHackApi.runCode(
+							parsedData.message,
+						)}"}`,
+					);
+				else console.error("Hey the socket is closed");
+			} else if (parsedData.type == "command") {
 				switch (parsedData.message) {
 					case "getIsCurrentLiked": {
 						if (socketOpen)
@@ -226,6 +162,41 @@ const SpotifyHackApi = {
 						break;
 					}
 				}
+			}
 		});
+		//}
+	},
+
+	render: () => {
+		const activeBtn =
+			'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="1.33em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 193"><path d="M192.44 144.645h31.78V68.339l-35.805-35.804l-22.472 22.472l26.497 26.497v63.14zm31.864 15.931H113.452L86.954 134.08l11.237-11.236l21.885 21.885h45.028l-44.357-44.441l11.32-11.32l44.357 44.358V88.296l-21.801-21.801l11.152-11.153L110.685 0H0l31.696 31.696v.084H97.436l23.227 23.227l-33.96 33.96L63.476 65.74V47.712h-31.78v31.193l55.007 55.007L64.314 156.3l35.805 35.805H256l-31.696-31.529z" fill="#ffffff""/></svg>';
+		const inactiveBtn =
+			'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="1.33em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 193"><path d="M192.44 144.645h31.78V68.339l-35.805-35.804l-22.472 22.472l26.497 26.497v63.14zm31.864 15.931H113.452L86.954 134.08l11.237-11.236l21.885 21.885h45.028l-44.357-44.441l11.32-11.32l44.357 44.358V88.296l-21.801-21.801l11.152-11.153L110.685 0H0l31.696 31.696v.084H97.436l23.227 23.227l-33.96 33.96L63.476 65.74V47.712h-31.78v31.193l55.007 55.007L64.314 156.3l35.805 35.805H256l-31.696-31.529z" fill="#231F20"/></svg>';
+
+		const SpotifyHackBtn = new Spicetify.Topbar.Button(
+			"Start Listening",
+			inactiveBtn,
+			() => {
+				SpotifyHackApi.startListening();
+				if (SpotifyHackApi.ws != null)
+					if (SpotifyHackApi.ws.readyState === WebSocket.OPEN) {
+						SpotifyHackBtn.icon = activeBtn;
+					}
+			},
+		);
+
+		setInterval(() => {
+			if (SpotifyHackApi.ws != null) {
+				if (SpotifyHackApi.ws.readyState == WebSocket.OPEN) {
+					SpotifyHackBtn.icon = activeBtn;
+				} else {
+					SpotifyHackBtn.icon = inactiveBtn;
+				}
+			}
+		}, 1000);
 	},
 };
+
+(() => {
+	SpotifyHackApi.render();
+})();

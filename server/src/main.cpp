@@ -1,32 +1,14 @@
 #define CROW_MAIN
 #define CROW_ENABLE_DEBUG
-#include "_precompiled.hpp"
+#include "Log.hpp"
+#include "crow/app.h"
+#include "crow/json.h"
 
-void my_handler(int s) {
-	std::cout << "Caught signal " << s << std::endl;
-}
+#include <atomic>
+#include <string>
+#include <string_view>
 
-int main() {
-	precompiled();
-	auto data       = R"({"type":"command", "message":"play"})";
-
-	auto parsedData = crow::json::load(data);
-	std::cout << parsedData << std::endl;
-	auto _type = parsedData["type"];
-	std::cout << _type << std::endl;
-	auto _message = parsedData["message"];
-	std::cout << _message << std::endl;
-
-	std::string type(_type);
-	std::string message(_message);
-
-	Log::Debug("type: ", type);
-	Log::Debug("message: ", message);
-}
-#if 0
 int main(int, char**) {
-
-	signal(SIGINT, my_handler);
 
 	const std::uint16_t                       PORT = 8080;
 	crow::SimpleApp                           app;
@@ -42,20 +24,34 @@ int main(int, char**) {
 		       "toggleLikeCurrent\n/command/toggleShuffle\n";
 	});
 
-	//CROW_ROUTE(app, "/command/<string>")
+	app.route_dynamic("/code").methods(
+	    crow::HTTPMethod::POST)([&](const crow::request& req, crow::response& res) {
+		if(globalConn == nullptr) {
+			res.code = 500;
+			return R"({"message", "client not connected"})";
+		} else {
+			std::string code(crow::json::load(req.body)["command"]);
+			(*globalConn)
+			    .send_text(R"({"type": "code", "message": ")" + code + "\"}");
+			res.add_header("Access-Control-Allow-Origin", "*");
+			res.add_header("Access-Control-Allow-Headers", "Content-Type");
+			return R"({"type": "info", "message", "sending command to client"})";
+		}
+	});
+
 	app.route_dynamic("/command/<string>")([&](const crow::request&,
-						   crow::response&,
+						   crow::response&   res,
 						   const std::string command) {
 		Log::Debug("Received REST Command: ", command);
 		if(globalConn == nullptr) {
-			//res.code = 500;
+			res.code = 500;
 			return R"({"message", "client not connected"})";
 		} else {
 			(*globalConn)
 			    .send_text(
 				R"({"type": "command", "message": ")" + command + "\"}");
-			//res.add_header("Access-Control-Allow-Origin", "*");
-			//res.add_header("Access-Control-Allow-Headers", "Content-Type");
+			res.add_header("Access-Control-Allow-Origin", "*");
+			res.add_header("Access-Control-Allow-Headers", "Content-Type");
 			return R"({"type": "info", "message", "sending command to client"})";
 		}
 	});
@@ -95,14 +91,9 @@ int main(int, char**) {
 		    else {
 			    Log::Info("Data from '", &conn, "': ", data);
 
-			    auto parsedData = crow::json::load(data);
-			    auto _type      = parsedData["type"];
-			    auto _message   = parsedData["message"];
-
-			    std::string type((char*) _type.begin(), (char*) _type.end());
-			    std::string message(
-				(char*) _message.begin(),
-				(char*) _message.end());
+			    auto        parsedData = crow::json::load(data);
+			    std::string type(parsedData["type"]);
+			    std::string message(parsedData["message"]);
 
 			    if(type == "command") {
 				    if(message == "getRepeatStatus") {
@@ -190,18 +181,16 @@ int main(int, char**) {
 				    return;
 			    }
 
-			    auto parsedData = crow::json::load(data);
-			    auto _type      = parsedData["type"];
-			    auto _message   = parsedData["message"];
+			    auto        parsedData = crow::json::load(data);
+			    std::string type(parsedData["type"]);
+			    std::string message(parsedData["message"]);
 
-			    std::string type((char*) _type.begin(), (char*) _type.end());
-			    std::string message(
-				(char*) _message.begin(),
-				(char*) _message.end());
-
-			    Log::Debug(type, message);
-
-			    if(type == "command") {
+			    if(type == "code") {
+				    (*globalConn)
+					.send_text(
+					    R"({"type": "code", "message": ")" + message +
+					    "\"}");
+			    } else if(type == "command") {
 				    if(message == "disableRepeatOne") {
 					    (*globalConn)
 						.send_text(
@@ -275,4 +264,3 @@ int main(int, char**) {
 
 	app.port(PORT).loglevel(crow::LogLevel::Critical).run();
 }
-#endif
