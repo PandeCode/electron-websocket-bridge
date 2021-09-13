@@ -1,1 +1,175 @@
-./Debug/compile_commands.json
+[
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -o CMakeFiles/server_unity.dir/cotire/server_CXX_unity.cxx.o -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/cotire/server_CXX_unity.cxx",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/cotire/server_CXX_unity.cxx"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -fpch-instantiate-templates -Xclang -emit-pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -x c++-header -o CMakeFiles/server.dir/cmake_pch.hxx.pch -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.cxx",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.cxx"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -o CMakeFiles/server.dir/src/main.cpp.o -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/src/main.cpp",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/src/main.cpp"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/Log.hpp",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/Log.hpp"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/app.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/app.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/version.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/version.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/settings.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/settings.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/logging.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/logging.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/utility.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/utility.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/routing.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/routing.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/common.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/common.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/http_response.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/http_response.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/http_request.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/http_request.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/ci_map.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/ci_map.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/query_string.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/query_string.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/socket_adaptors.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/socket_adaptors.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/mime_types.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/mime_types.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/returnable.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/returnable.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/websocket.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/websocket.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/TinySHA1.hpp",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/TinySHA1.hpp"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/mustache.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/mustache.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/json.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/json.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/middleware_context.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/middleware_context.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/http_server.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/http_server.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/http_connection.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/http_connection.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/http_parser_merged.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/http_parser_merged.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/parser.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/parser.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/dumb_timer_queue.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/dumb_timer_queue.h"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug",
+  "command": "/usr/bin/clang++ -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument -g -g -pthread -Winvalid-pch -Xclang -include-pch -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx.pch -Xclang -include -Xclang /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/Debug/CMakeFiles/server.dir/cmake_pch.hxx -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/compression.h",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/server/include/crow/compression.h"
+}
+]

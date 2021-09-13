@@ -44,11 +44,15 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
 target_link_directories(${PROJECT_NAME} PRIVATE ${LINK_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_LIBRARIES})
 target_compile_options(${PROJECT_NAME} PRIVATE -pthread)
-
 target_precompile_headers(
-  ${PROJECT_NAME} PUBLIC
+  ${PROJECT_NAME} PRIVATE
   <iostream>
   <string>
   <atomic>
   <string_view>
 )
+
+
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules")
+include(cotire)
+cotire(${PROJECT_NAME})
