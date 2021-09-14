@@ -10,3 +10,6 @@
 	- Make Example With Spotify Api
 	- More commands
 	- Clean Code up and optimise
+
+# Bugz
+	- Multiple PLayer Client Connections Crashes the server
