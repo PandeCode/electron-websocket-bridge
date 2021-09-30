@@ -5,14 +5,22 @@
 #include "crow/json.h"
 
 #include <atomic>
+#include <cstdlib>
 #include <string>
 #include <string_view>
 
-int main(int, char**) {
+const char* sockethelp = R"(
 
-	const std::uint16_t                       PORT = 8080;
-	crow::SimpleApp                           app;
-	std::atomic<crow::websocket::connection*> globalConn = nullptr;
+)";
+
+int main(int argc, char** argv) {
+	using namespace std;
+	using namespace Log;
+
+	std::uint16_t PORT = 8080;
+	if(argc > 1) PORT = std::atoi(argv[1]);
+	crow::SimpleApp                      app;
+	atomic<crow::websocket::connection*> globalConn = nullptr;
 
 	CROW_ROUTE(app, "/")
 	([&]() {
@@ -29,100 +37,100 @@ int main(int, char**) {
 		if(globalConn == nullptr) {
 			res.code = 500;
 			return R"({"message", "client not connected"})";
-		} else {
-			std::string code(crow::json::load(req.body)["command"]);
-			(*globalConn)
-			    .send_text(R"({"type": "code", "message": ")" + code + "\"}");
-			res.add_header("Access-Control-Allow-Origin", "*");
-			res.add_header("Access-Control-Allow-Headers", "Content-Type");
-			return R"({"type": "info", "message", "sending command to client"})";
 		}
+		string code(crow::json::load(req.body)["command"]);
+		(*globalConn)
+		    .send_text(R"({"type": "code", "message": ")" + code + "\"}");
+		res.add_header("Access-Control-Allow-Origin", "*");
+		res.add_header("Content-Type", "application/json");
+		res.body = R"({"type": "info", "message", "sending command to client"})";
+
+		res.end();
+		return res.body.c_str();
 	});
 
 	app.route_dynamic("/command/<string>")([&](const crow::request&,
-						   crow::response&   res,
-						   const std::string command) {
-		Log::Debug("Received REST Command: ", command);
+						   crow::response& res,
+						   const string    command) {
+		Debug("Received REST Command: ", command);
 		if(globalConn == nullptr) {
 			res.code = 500;
 			return R"({"message", "client not connected"})";
-		} else {
-			(*globalConn)
-			    .send_text(
-				R"({"type": "command", "message": ")" + command + "\"}");
-			res.add_header("Access-Control-Allow-Origin", "*");
-			res.add_header("Access-Control-Allow-Headers", "Content-Type");
-			return R"({"type": "info", "message", "sending command to client"})";
 		}
+		(*globalConn)
+		    .send_text(R"({"type": "command", "message": ")" + command + "\"}");
+		res.add_header("Access-Control-Allow-Origin", "*");
+
+		res.add_header("Content-Type", "application/json");
+		res.body = R"({"type": "info", "message", "sending command to client"})";
+		res.end();
+		return res.body.c_str();
 	});
 
 	CROW_ROUTE(app, "/ws")
 	    .websocket()
+	    .onaccept([&](const crow::request& req) {
+		    Info(
+			"Accecpt: ",
+			" :: ",
+			req.body,
+			" :: ",
+			req.url,
+			" :: ",
+			req.raw_url,
+			" :: ",
+			req.remote_ip_address);
+
+		    if(globalConn != nullptr) {
+			    Info("Imposter client blocked, already connected.");
+			    return false;
+		    }
+
+		    return true;
+	    })
+	    .onerror([&](crow::websocket::connection& conn) {
+		    Error("Error with '", &conn, "'");
+	    })
 	    .onopen([&](crow::websocket::connection& conn) {
 		    if(globalConn == nullptr) {
-			    Log::Success("Player Client Connected: ", &conn);
+			    Success("Player Client Connected: ", &conn);
 			    globalConn = &conn;
 		    } else {
-			    Log::Info("Caught Imposter Player: ", &conn);
-			    conn.close("imposter");
+			    Info("Imposter What: ", &conn);
 		    }
 	    })
-	    .onclose([&](crow::websocket::connection& conn, const std::string& reason) {
+	    .onclose([&](crow::websocket::connection& conn, const string& reason) {
 		    if(&conn == globalConn) {
-			    Log::Warn(
-				"Player Client Disconnected: ",
-				&conn,
-				" : ",
-				reason);
+			    Warn("Player Client Disconnected: ", &conn, " : ", reason);
 			    globalConn = nullptr;
 		    } else {
-			    Log::Info(
-				"Imposter Client Disconnected: ",
-				//&conn,
-				" : ",
-				reason);
+			    Info("Imposter Client Disconnected: ", &conn, " : ", reason);
 		    }
 	    })
 	    .onmessage([&](crow::websocket::connection& conn,
-			   const std::string&           data,
+			   const string&                data,
 			   bool                         is_binary) {
 		    if(is_binary)
-			    Log::Info("Binary Data from '", &conn, "': ", data);
+			    Info("Binary Data from '", &conn, "': ", data);
 		    else {
-			    Log::Info("Data from '", &conn, "': ", data);
+			    auto   parsedData = crow::json::load(data);
+			    string type(parsedData["type"]);
+			    string message(parsedData["message"]);
 
-			    auto        parsedData = crow::json::load(data);
-			    std::string type(parsedData["type"]);
-			    std::string message(parsedData["message"]);
-
-			    if(type == "command") {
-				    if(message == "getRepeatStatus") {
-					    Log::Info(
-						"Player Repeat Status '",
-						message,
-						"'");
-				    } else if(message == "getIsCurrentLiked") {
-					    Log::Info(
-						"Player Is Current Liked '",
-						message,
-						"'");
-				    } else if(message == "getPlayState") {
-					    Log::Info(
-						"Player Play State '",
-						message,
-						"'");
-				    } else {
-					    Log::Error("Unknown command '", message, "'");
-				    }
+			    if(type == "getRepeatStatus") {
+				    Info("Repeat Status '", message, "'");
+			    } else if(type == "getIsCurrentLiked") {
+				    Info("Is Current Liked '", message, "'");
+			    } else if(type == "getIsPlaying") {
+				    Info("Is Playing '", message, "'");
 			    } else if(type == "info") {
-				    Log::Info("From Player Client '", message, "'");
+				    Info("Info From Player Client '", message, "'");
 			    } else if(type == "error") {
-				    Log::Error(
-					"Error from Player Client '",
-					message,
-					"'");
+				    Error("Error from Player Client '", message, "'");
+			    } else if(type == "code") {
+				    Info("Got code response '", message,"'");
 			    } else {
-				    Log::Error(
+				    Error(
 					"Unknown type '",
 					type,
 					"' with '",
@@ -163,27 +171,27 @@ int main(int, char**) {
 	CROW_ROUTE(app, "/client/ws")
 	    .websocket()
 	    .onopen([&](crow::websocket::connection& conn) {
-		    Log::Success("Client Connected: ", &conn);
+		    Success("Client Connected: ", &conn);
 	    })
-	    .onclose([&](crow::websocket::connection& conn, const std::string& reason) {
-		    Log::Info("Client Disconnected: ", &conn, " : ", reason);
+	    .onclose([&](crow::websocket::connection& conn, const string& reason) {
+		    Info("Client Disconnected: ", &conn, " : ", reason);
 	    })
 	    .onmessage([&](crow::websocket::connection& conn,
-			   const std::string&           data,
+			   const string&                data,
 			   bool                         is_binary) {
 		    if(is_binary)
-			    Log::Info("Binary Data from '", &conn, "': ", data);
+			    Info("Binary Data from '", &conn, "': ", data);
 		    else {
-			    Log::Info("Data from '", &conn, "': ", data);
+			    Info("Data from '", &conn, "': ", data);
 			    if(globalConn == nullptr) {
 				    conn.send_text(
 					R"({"type": "error", "message": "client not connected"})");
 				    return;
 			    }
 
-			    auto        parsedData = crow::json::load(data);
-			    std::string type(parsedData["type"]);
-			    std::string message(parsedData["message"]);
+			    auto   parsedData = crow::json::load(data);
+			    string type(parsedData["type"]);
+			    string message(parsedData["message"]);
 
 			    if(type == "code") {
 				    (*globalConn)
@@ -252,7 +260,7 @@ int main(int, char**) {
 						.send_text(
 						    R"({"type": "command", "message": "toggleShuffle"})");
 				    } else {
-					    Log::Error("Unknown Command: ", message);
+					    Error("Unknown Command: ", message);
 					    conn.send_text(
 						R"({"type": "error", "message": "unknown command ')" +
 						message + "'\"}");

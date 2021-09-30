@@ -1,3 +1,7 @@
 tags
+tags.lock
+tags.temp
+
 server/Debug
 server/.cache
+server/.gdb_history

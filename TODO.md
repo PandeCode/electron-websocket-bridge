@@ -1,4 +1,7 @@
 # Todo
+	- open.spotify.com
+	- Make lua binding for neovim
+	- Make python bindngs
 	- Use Json
 	- Return Values
 	- Fix naming schema
@@ -10,6 +13,4 @@
 	- Make Example With Spotify Api
 	- More commands
 	- Clean Code up and optimise
-
-# Bugz
-	- Multiple PLayer Client Connections Crashes the server
+	- WASM
