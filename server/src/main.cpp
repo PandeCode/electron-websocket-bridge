@@ -188,11 +188,9 @@ int main(int argc, char** argv) {
 					R"({"type": "error", "message": "client not connected"})");
 				    return;
 			    }
-
 			    auto   parsedData = crow::json::load(data);
 			    string type(parsedData["type"]);
 			    string message(parsedData["message"]);
-
 			    if(type == "code") {
 				    (*globalConn)
 					.send_text(
@@ -270,5 +268,5 @@ int main(int argc, char** argv) {
 		    }
 	    });
 
-	app.port(PORT).loglevel(crow::LogLevel::Critical).run();
+	app.port(PORT).loglevel(crow::LogLevel::Info).run();
 }
