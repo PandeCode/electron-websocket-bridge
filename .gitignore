@@ -3,5 +3,6 @@ tags.lock
 tags.temp
 
 server/Debug
+server/Release
 server/.cache
 server/.gdb_history

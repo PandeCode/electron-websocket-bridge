@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 	    crow::HTTPMethod::POST)([&](const crow::request& req, crow::response& res) {
 		if(globalConn == nullptr) {
 			res.code = 500;
-			return R"({"message", "client not connected"})";
+			return R"({"type": "error","message": "client not connected"})";
 		}
 		string code(crow::json::load(req.body)["command"]);
 		(*globalConn)
