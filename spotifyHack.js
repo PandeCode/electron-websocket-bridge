@@ -30,40 +30,69 @@ const SpotifyHackApi = {
 		SpotifyHackApi.toggleLikeCurrent(),
 
 	/** @type {WebSocket} */ ws: null,
+	/** @type {number} */ interval: null,
+
+	/** @type {number} */ startListeningCalls: 0,
 
 	startListening: () => {
-		//if (SpotifyHackApi.ws != null)
-		//if (SpotifyHackApi.ws.readyState != WebSocket.OPEN) {
+		console.info(
+			"Start Listening Call: ",
+			++SpotifyHackApi.startListeningCalls,
+		);
 		let socketOpen = false;
 
-		SpotifyHackApi.ws = new WebSocket("ws://localhost:8080/ws");
-		const ws = SpotifyHackApi.ws;
+		if (SpotifyHackApi.ws != null) {
+			if (SpotifyHackApi.ws.readyState == WebSocket.OPEN) return true;
+			else {
+				delete SpotifyHackApi.ws;
+				SpotifyHackApi.ws = null;
+			}
+		}
 
-		ws.addEventListener("open", (event) => {
+		try {
+			SpotifyHackApi.ws = new WebSocket("ws://localhost:8080/ws");
+		} catch (e) {
+			return false;
+		}
+
+		SpotifyHackApi.ws.addEventListener("open", (event) => {
+			if (SpotifyHackApi.interval != null) {
+				clearInterval(SpotifyHackApi.interval);
+				SpotifyHackApi.interval = null;
+			}
 			socketOpen = true;
 			console.info("Hello Server!", event);
-			ws.send(`{"type": "info", "message": "hello server!"}`);
+			SpotifyHackApi.ws.send(
+				`{"type": "info", "message": "hello server!"}`,
+			);
 		});
-		ws.addEventListener("close", (event) => {
+
+		SpotifyHackApi.ws.addEventListener("close", (event) => {
 			socketOpen = false;
 			console.warn("Bye Server!", event);
+			if (SpotifyHackApi.interval == null)
+				SpotifyHackApi.interval = setInterval(() => {
+					SpotifyHackApi.startListening();
+				}, 2500);
 		});
-		ws.addEventListener("error", (event) => {
+
+		SpotifyHackApi.ws.addEventListener("error", (event) => {
 			console.error("Error with server", event);
 			if (socketOpen)
-				ws.send(
+				SpotifyHackApi.ws.send(
 					`{"type": "error", "message": "problem with WebSocket client"}`,
 				);
 			else console.error("Hey the socket is closed");
 		});
-		ws.addEventListener("message", (event) => {
+
+		SpotifyHackApi.ws.addEventListener("message", (event) => {
 			console.info("Message from server ", event.data);
 			let parsedData;
 			try {
 				parsedData = JSON.parse(event.data);
 			} catch (error) {
 				if (socketOpen)
-					ws.send(
+					SpotifyHackApi.ws.send(
 						`{"type": "error", "message": "failed to parse server's data"}`,
 					);
 				else console.error("Hey the socket is closed");
@@ -72,7 +101,7 @@ const SpotifyHackApi = {
 			}
 			if (parsedData.type == "code") {
 				if (socketOpen)
-					ws.send(
+					SpotifyHackApi.ws.send(
 						`{"type": "code", "message": "${SpotifyHackApi.runCode(
 							parsedData.message,
 						)}"}`,
@@ -82,7 +111,7 @@ const SpotifyHackApi = {
 				switch (parsedData.message) {
 					case "getIsCurrentLiked": {
 						if (socketOpen)
-							ws.send(
+							SpotifyHackApi.ws.send(
 								`{"type": "getIsCurrentLiked", "message": "${SpotifyHackApi.getIsCurrentLiked()}"}`,
 							);
 						else console.error("Hey the socket is closed");
@@ -90,7 +119,7 @@ const SpotifyHackApi = {
 					}
 					case "getRepeatStatus": {
 						if (socketOpen)
-							ws.send(
+							SpotifyHackApi.ws.send(
 								`{"type": "getRepeatStatus", "message": "${SpotifyHackApi.getRepeatStatus()}"}`,
 							);
 						else console.error("Hey the socket is closed");
@@ -98,7 +127,7 @@ const SpotifyHackApi = {
 					}
 					case "getPlayState": {
 						if (socketOpen)
-							ws.send(
+							SpotifyHackApi.ws.send(
 								`{"type": "getPlayState", "message": "${SpotifyHackApi.getPlayState()}"}`,
 							);
 						else console.error("Hey the socket is closed");
@@ -154,7 +183,7 @@ const SpotifyHackApi = {
 					}
 					default: {
 						if (socketOpen)
-							ws.send(
+							SpotifyHackApi.ws.send(
 								`{"type": "error", "message": "unknown command"}`,
 							);
 						else console.error("Hey the socket is closed");
@@ -164,7 +193,8 @@ const SpotifyHackApi = {
 				}
 			}
 		});
-		//}
+
+		return SpotifyHackApi.ws.readyState == WebSocket.OPEN;
 	},
 
 	render: () => {
