@@ -3,23 +3,17 @@
 	<head>
 		<title>WebSocket Client Test</title>
 
-		<link rel="icon" href="data:;base64,=" />
-		<script type="text/javascript" src="client/main.js"></script>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-		<script
-			type="text/javascript"
-			src="client/socketMain.js"
-			defer
-		></script>
+		<link href="client/tailwind.css" rel="stylesheet" />
+		<link rel="icon" href="data:;base64,=" />
+
+		<script type="text/javascript" src="client/socket.js" defer></script>
+
+		<script type="text/javascript" src="client/http.js" defer></script>
 
 		<script type="text/javascript" src="client/rtc.js" defer></script>
-
-		<style>
-			button {
-				background: #000;
-				color: #fff;
-			}
-		</style>
 	</head>
 
 	<body>
@@ -46,20 +40,37 @@
 		<hr />
 		<h1>RestApi</h1>
 
-		<button id="nextRestBtn">Next</button>
-		<button id="playRestBtn">Play</button>
-		<button id="pauseRestBtn">Pause</button>
-		<button id="previousRestBtn">Previous</button>
-		<button id="playPauseRestBtn">PlayPause</button>
-		<button id="playStateRestBtn">PlayState</button>
-		<button id="likeCurrentRestBtn">LikeCurrent</button>
-		<button id="enableRepeatRestBtn">EnableRepeat</button>
-		<button id="repeatStatusRestBtn">RepeatStatus</button>
-		<button id="toggleShuffleRestBtn">ToggleShuffle</button>
-		<button id="dislikeCurrentRestBtn">DislikeCurrent</button>
-		<button id="isCurrentLikedRestBtn">IsCurrentLiked</button>
-		<button id="enableRepeatOneRestBtn">EnableRepeatOne</button>
-		<button id="disableRepeatOneRestBtn">DisableRepeatOne</button>
-		<button id="toggleLikeCurrentRestBtn">ToggleLikeCurrent</button>
+		<div class="flex-auto flex space-x-3">
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="nextRestBtn">Next</button>
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="playRestBtn">Play</button>
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="pauseRestBtn">Pause</button>
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="previousRestBtn">Previous</button>
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="playPauseRestBtn">PlayPause</button>
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="playStateRestBtn">PlayState</button>
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="likeCurrentRestBtn">LikeCurrent</button>
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="enableRepeatRestBtn">EnableRepeat</button>
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="repeatStatusRestBtn">RepeatStatus</button>
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="toggleShuffleRestBtn">ToggleShuffle</button>
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="dislikeCurrentRestBtn">DislikeCurrent</button>
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="isCurrentLikedRestBtn">IsCurrentLiked</button>
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="enableRepeatOneRestBtn">EnableRepeatOne</button>
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="disableRepeatOneRestBtn">DisableRepeatOne</button>
+			<!-- prettier-ignore -->
+			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="toggleLikeCurrentRestBtn">ToggleLikeCurrent</button>
+		</div>
 	</body>
 </html>

@@ -61,7 +61,7 @@ function activeWebSockets() {
 
 	ws.addEventListener("open", (event) => {
 		console.info("Hello Server!", event);
-		ws.send("Hello Server!");
+		ws.send('{"type": "command", "message": "Hello Server!"}');
 	});
 	ws.addEventListener("close", (event) => {
 		console.warn("Bye Server!", event);
@@ -74,96 +74,49 @@ function activeWebSockets() {
 	});
 
 	nextBtn.addEventListener("click", () => {
-		ws.send("next");
+		ws.send('{"type": "command", "message": "next"}');
 	});
 	playBtn.addEventListener("click", () => {
-		ws.send("play");
+		ws.send('{"type": "command", "message": "play"}');
 	});
 	pauseBtn.addEventListener("click", () => {
-		ws.send("pause");
+		ws.send('{"type": "command", "message": "pause"}');
 	});
 	previousBtn.addEventListener("click", () => {
-		ws.send("previous");
+		ws.send('{"type": "command", "message": "previous"}');
 	});
 	playPauseBtn.addEventListener("click", () => {
-		ws.send("playPause");
+		ws.send('{"type": "command", "message": "playPause"}');
 	});
 	playStateBtn.addEventListener("click", () => {
-		ws.send("playState");
+		ws.send('{"type": "command", "message": "playState"}');
 	});
 	likeCurrentBtn.addEventListener("click", () => {
-		ws.send("likeCurrent");
+		ws.send('{"type": "command", "message": "likeCurrent"}');
 	});
 	enableRepeatBtn.addEventListener("click", () => {
-		ws.send("enableRepeat");
+		ws.send('{"type": "command", "message": "enableRepeat"}');
 	});
 	repeatStatusBtn.addEventListener("click", () => {
-		ws.send("repeatStatus");
+		ws.send('{"type": "command", "message": "repeatStatus"}');
 	});
 	toggleShuffleBtn.addEventListener("click", () => {
-		ws.send("toggleShuffle");
+		ws.send('{"type": "command", "message": "toggleShuffle"}');
 	});
 	dislikeCurrentBtn.addEventListener("click", () => {
-		ws.send("dislikeCurrent");
+		ws.send('{"type": "command", "message": "dislikeCurrent"}');
 	});
 	isCurrentLikedBtn.addEventListener("click", () => {
-		ws.send("isCurrentLiked");
+		ws.send('{"type": "command", "message": "isCurrentLiked"}');
 	});
 	enableRepeatOneBtn.addEventListener("click", () => {
-		ws.send("enableRepeatOne");
+		ws.send('{"type": "command", "message": "enableRepeatOne"}');
 	});
 	disableRepeatOneBtn.addEventListener("click", () => {
-		ws.send("disableRepeatOne");
+		ws.send('{"type": "command", "message": "disableRepeatOne"}');
 	});
 	toggleLikeCurrentBtn.addEventListener("click", () => {
-		ws.send("toggleLikeCurrent");
+		ws.send('{"type": "command", "message": "toggleLikeCurrent"}');
 	});
+
 }
-
-const BASE_URL = "http://localhost:8080/command/";
-
-$("#nextRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "next").then(d => console.log(d));
-});
-$("#playRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "play").then(d => console.log(d));
-});
-$("#pauseRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "pause").then(d => console.log(d));
-});
-$("#previousRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "previous").then(d => console.log(d));
-});
-$("#playPauseRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "playPause").then(d => console.log(d));
-});
-$("#playStateRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "playState").then(d => console.log(d));
-});
-$("#likeCurrentRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "likeCurrent").then(d => console.log(d));
-});
-$("#enableRepeatRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "enableRepeat").then(d => console.log(d));
-});
-$("#repeatStatusRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "repeatStatus").then(d => console.log(d));
-});
-$("#toggleShuffleRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "toggleShuffle").then(d => console.log(d));
-});
-$("#dislikeCurrentRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "dislikeCurrent").then(d => console.log(d));
-});
-$("#isCurrentLikedRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "isCurrentLiked").then(d => console.log(d));
-});
-$("#enableRepeatOneRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "enableRepeatOne").then(d => console.log(d));
-});
-$("#disableRepeatOneRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "disableRepeatOne").then(d => console.log(d));
-});
-$("#toggleLikeCurrentRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "toggleLikeCurrent").then(d => console.log(d));
-});

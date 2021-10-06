@@ -8,43 +8,92 @@
 #include <cstdlib>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 
-const char* sockethelp = R"(
+constexpr const char* socketHelp = R"(
+{"type": "", "message": ""}
 
+type: info | command | code
+
+Examples
+{"type": "command", "message": "playPause"}
+{"type": "command", "message": "play"}
+{"type": "command", "message": "pause"}
+{"type": "command", "message": "next"}
+)";
+
+constexpr const char* httpHelp   = R"(Help:
+
+/ws
+/client
+/client/ws
+
+/command/disableRepeatOne
+/command/dislikeCurrent
+"command/enableRepeat
+/command/enableRepeatOne
+/command/isCurrentLiked
+/command/likeCurrent
+/command/next
+/command/pause
+/command/play
+/command/playPause
+/command/getIsPlaying
+"command/previous
+/command/repeatStatus
+/command/toggleLikeCurrent
+/command/toggleShuffle
+[POST] /code
+
+Examples
+	curl -# -X POST -d '{"command": "location.href=location.href"}' 'http://localhost:8080/code'
+	curl -#vikLd '{"command": "location.href=location.href"}' -H "Content-Type: application/json" "http://localhost:8080/code"
 )";
 
 int main(int argc, char** argv) {
 	using namespace std;
 	using namespace Log;
 
-	std::uint16_t PORT = 8080;
-	if(argc > 1) PORT = std::atoi(argv[1]);
+	uint16_t PORT = 8080;
+	if(argc > 1) PORT = atoi(argv[1]);
 	crow::SimpleApp                      app;
 	atomic<crow::websocket::connection*> globalConn = nullptr;
 
 	CROW_ROUTE(app, "/")
-	([&]() {
-		return "Help:\n/command/disableRepeatOne\n/command/dislikeCurrent\n/"
-		       "command/enableRepeat\n/command/enableRepeatOne\n/command/"
-		       "isCurrentLiked\n/command/likeCurrent\n/command/next\n/command/"
-		       "pause\n/command/play\n/command/playPause\n/command/playState\n/"
-		       "command/previous\n/command/repeatStatus\n/command/"
-		       "toggleLikeCurrent\n/command/toggleShuffle\n";
-	});
+	([&]() { return httpHelp; });
+	CROW_ROUTE(app, "/command")
+	([&]() { return httpHelp; });
+	CROW_ROUTE(app, "/help")
+	([&]() { return httpHelp; });
+	CROW_ROUTE(app, "/code")
+	([&]() { return httpHelp; });
 
 	app.route_dynamic("/code").methods(
 	    crow::HTTPMethod::POST)([&](const crow::request& req, crow::response& res) {
 		if(globalConn == nullptr) {
 			res.code = 500;
-			return R"({"type": "error","message": "client not connected"})";
+			return R"({"type": "error", "message": "client not connected"})";
 		}
-		string code(crow::json::load(req.body)["command"]);
-		(*globalConn)
-		    .send_text(R"({"type": "code", "message": ")" + code + "\"}");
+
 		res.add_header("Access-Control-Allow-Origin", "*");
 		res.add_header("Content-Type", "application/json");
-		res.body = R"({"type": "info", "message", "sending command to client"})";
 
+		crow::json::rvalue parsedData;
+		try {
+			parsedData = crow::json::load(req.body);
+		} catch(std::runtime_error err) {
+			res.body = std::string(R"({"type": "error", "message": ")") +
+				   err.what() + "\"}";
+			res.code = 400;
+			res.end();
+			return res.body.c_str();
+		}
+
+		string code(parsedData["command"]);
+
+		(*globalConn)
+		    .send_text(R"({"type": "code", "message": ")" + code + "\"}");
+		res.body = R"({"type": "info", "message": "sending command to client"})";
 		res.end();
 		return res.body.c_str();
 	});
@@ -55,14 +104,14 @@ int main(int argc, char** argv) {
 		Debug("Received REST Command: ", command);
 		if(globalConn == nullptr) {
 			res.code = 500;
-			return R"({"message", "client not connected"})";
+			return R"({"type": "error", "message": "client not connected"})";
 		}
 		(*globalConn)
 		    .send_text(R"({"type": "command", "message": ")" + command + "\"}");
 		res.add_header("Access-Control-Allow-Origin", "*");
 
 		res.add_header("Content-Type", "application/json");
-		res.body = R"({"type": "info", "message", "sending command to client"})";
+		res.body = R"({"type": "info", "message": "sending command to client"})";
 		res.end();
 		return res.body.c_str();
 	});
@@ -113,7 +162,16 @@ int main(int argc, char** argv) {
 		    if(is_binary)
 			    Info("Binary Data from '", &conn, "': ", data);
 		    else {
-			    auto   parsedData = crow::json::load(data);
+
+			    crow::json::rvalue parsedData;
+			    try {
+				    parsedData = crow::json::load(data);
+			    } catch(std::runtime_error err) {
+				    conn.send_text(
+					std::string(R"({type: error, "message": ")") +
+					err.what() + "\"}");
+			    }
+
 			    string type(parsedData["type"]);
 			    string message(parsedData["message"]);
 
@@ -128,7 +186,7 @@ int main(int argc, char** argv) {
 			    } else if(type == "error") {
 				    Error("Error from Player Client '", message, "'");
 			    } else if(type == "code") {
-				    Info("Got code response '", message,"'");
+				    Info("Got code response '", message, "'");
 			    } else {
 				    Error(
 					"Unknown type '",
@@ -140,17 +198,24 @@ int main(int argc, char** argv) {
 		    }
 	    });
 
-	CROW_ROUTE(app, "/client/main.js")
+	CROW_ROUTE(app, "/client/tailwind.css")
 	([](const crow::request&, crow::response& res) {
 		res.set_static_file_info("/home/shawn/dev/cpp/CLIProjeccts/"
-					 "SpotifyHack/client/main.js");
+					 "SpotifyHack/client/tailwind.css");
 		res.end();
 	});
 
-	CROW_ROUTE(app, "/client/socketMain.js")
+	CROW_ROUTE(app, "/client/http.js")
 	([](const crow::request&, crow::response& res) {
 		res.set_static_file_info("/home/shawn/dev/cpp/CLIProjeccts/"
-					 "SpotifyHack/client/socketMain.js");
+					 "SpotifyHack/client/http.js");
+		res.end();
+	});
+
+	CROW_ROUTE(app, "/client/socket.js")
+	([](const crow::request&, crow::response& res) {
+		res.set_static_file_info("/home/shawn/dev/cpp/CLIProjeccts/"
+					 "SpotifyHack/client/socket.js");
 		res.end();
 	});
 
@@ -183,87 +248,55 @@ int main(int argc, char** argv) {
 			    Info("Binary Data from '", &conn, "': ", data);
 		    else {
 			    Info("Data from '", &conn, "': ", data);
+
+			    if(data == "help" || data == "?" || data == "h") {
+				    conn.send_text(socketHelp);
+				    return;
+			    }
+
 			    if(globalConn == nullptr) {
 				    conn.send_text(
 					R"({"type": "error", "message": "client not connected"})");
 				    return;
 			    }
-			    auto   parsedData = crow::json::load(data);
+
+			    crow::json::rvalue parsedData;
+			    try {
+				    parsedData = crow::json::load(data);
+			    } catch(std::runtime_error err) {
+				    conn.send_text(
+					std::string(R"({type: error, "message": ")") +
+					err.what() + "\"}");
+			    }
+
 			    string type(parsedData["type"]);
 			    string message(parsedData["message"]);
+
 			    if(type == "code") {
 				    (*globalConn)
 					.send_text(
 					    R"({"type": "code", "message": ")" + message +
 					    "\"}");
 			    } else if(type == "command") {
-				    if(message == "disableRepeatOne") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message": "disableRepeatOne"})");
-				    } else if(message == "dislikeCurrent") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message": "dislikeCurrent"})");
-				    } else if(message == "enableRepeat") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message": "enableRepeat"})");
-				    } else if(message == "enableRepeatOne") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message": "enableRepeatOne"})");
-				    } else if(message == "isCurrentLiked") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message": "isCurrentLiked"})");
-				    } else if(message == "likeCurrent") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message", "likeCurrent"})");
-				    } else if(message == "next") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message": "next"})");
-				    } else if(message == "pause") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message": "pause"})");
-				    } else if(message == "play") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message": "play"})");
-				    } else if(message == "playPause") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message": "playPause"})");
-				    } else if(message == "playState") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message": "playState"})");
-				    } else if(message == "previous") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message": "previous"})");
-				    } else if(message == "repeatStatus") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message": "repeatStatus"})");
-				    } else if(message == "toggleLikeCurrent") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message": "toggleLikeCurrent"})");
-				    } else if(message == "toggleShuffle") {
-					    (*globalConn)
-						.send_text(
-						    R"({"type": "command", "message": "toggleShuffle"})");
-				    } else {
-					    Error("Unknown Command: ", message);
+				    if(message != "")
+					    (*globalConn).send_text(data);
+				    else {
+					    Error("Blank Command: ", message);
 					    conn.send_text(
 						R"({"type": "error", "message": "unknown command ')" +
 						message + "'\"}");
 					    return;
 				    }
+			    } else if(type == "info") {
+				    conn.send_text(
+					R"({"type": "info", "message": ")" +
+					std::string(socketHelp) + "\"}");
+			    } else {
+				    Error("Unknown Type: '", type, "'");
+				    conn.send_text(
+					R"({"type": "error", "message": "unknown command ')" +
+					message + "'\"}");
+				    return;
 			    }
 		    }
 	    });

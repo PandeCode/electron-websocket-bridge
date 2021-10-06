@@ -1,6 +1,8 @@
+//
 //@ts-check
 /// <reference path="./globals.d.ts" />
 //
+
 const SpotifyHackApi = {
 	runCode: (/** @type {string} */ code) => eval(code),
 	next: () => Spicetify.Player.next(),
@@ -9,6 +11,7 @@ const SpotifyHackApi = {
 	shuffleOn: () => Spicetify.Player.setShuffle(true),
 	shuffleOff: () => Spicetify.Player.setShuffle(false),
 	playPause: () => Spicetify.Player.togglePlay(),
+	getIsPlaying: () => Spicetify.Player.isPlaying(),
 	play: () => Spicetify.Player.play(),
 	pause: () => Spicetify.Player.pause(),
 	getRepeatStatus: () => Spicetify.Player.getRepeat(),
@@ -125,16 +128,12 @@ const SpotifyHackApi = {
 						else console.error("Hey the socket is closed");
 						break;
 					}
-					case "getPlayState": {
+					case "getIsPlaying": {
 						if (socketOpen)
 							SpotifyHackApi.ws.send(
-								`{"type": "getPlayState", "message": "${SpotifyHackApi.getPlayState()}"}`,
+								`{"type": "getIsPlaying", "message": "${SpotifyHackApi.getIsPlaying()}"}`,
 							);
 						else console.error("Hey the socket is closed");
-						break;
-					}
-					case "disableRepeatOne": {
-						SpotifyHackApi.disableRepeatOne();
 						break;
 					}
 					case "dislikeCurrent": {
