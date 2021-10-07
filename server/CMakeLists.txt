@@ -23,6 +23,12 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+if(CMAKE_BUILD_TYPE STREQUAL Release)
+  add_compile_definitions(CMAKE_BUILD_TYPE_RELEASE=1)
+else()
+  add_compile_definitions(CMAKE_BUILD_TYPE_RELEASE=0)
+endif()
+
 project(server VERSION 1.0 DESCRIPTION "server Description" LANGUAGES CXX)
 
 find_package(Threads REQUIRED)
