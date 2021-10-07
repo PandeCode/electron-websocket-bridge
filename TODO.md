@@ -1,16 +1,8 @@
 # Todo
-	- open.spotify.com
-	- Make lua binding for neovim
 	- Make python bindngs
-	- Use Json
 	- Return Values
 	- Fix naming schema
-	- Proper Logging
-	- Format Messages
-	- CORS on /command/<string>
-	- Filesystem for client.html, main.js and socketMain.js
-	- Git
-	- Make Example With Spotify Api
+	- Intergrate with Spotify Api
 	- More commands
 	- Clean Code up and optimise
 	- WASM
