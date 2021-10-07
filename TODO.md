@@ -6,3 +6,4 @@
 	- More commands
 	- Clean Code up and optimise
 	- WASM
+	- Measure Performance
