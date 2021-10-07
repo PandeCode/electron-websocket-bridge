@@ -5,16 +5,15 @@
 
 class Server {
 
-	std::vector<crow::websocket::connection*> m_clients;
-	crow::SimpleApp                           m_app;
-
-	std::atomic<crow::websocket::connection*> playerClient = nullptr;
-
 	static const char* const s_socketHelp;
 	static const char* const s_httpHelp;
 
-	uint16_t       m_port;
-	crow::LogLevel m_logLevel;
+	crow::SimpleApp m_app;
+	uint16_t        m_port;
+	crow::LogLevel  m_logLevel;
+
+	std::vector<crow::websocket::connection*> m_clients;
+	std::atomic<crow::websocket::connection*> playerClient = nullptr;
 
 	void waitForEnterKey();
 
@@ -22,7 +21,6 @@ class Server {
 	void sendToPlayerClient(const char* text);
 
 	void enableAllEndpoints();
-
 	void enableClientWebsocket();
 	void enablePlayerClientWebsocket();
 	void enableHelpEndpoints();
@@ -34,8 +32,10 @@ class Server {
 	    const uint16_t&       port     = 8080,
 	    const crow::LogLevel& logLevel = crow::LogLevel::Info);
 
-	Server()  = delete;
-	~Server() = default;
+	Server()              = delete;
+	Server(const Server&) = delete;
+	~Server();
 
 	void startServer();
+	void killServer();
 };

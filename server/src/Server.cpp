@@ -2,6 +2,8 @@
 
 #include "Log.hpp"
 
+#include <algorithm>
+
 static char getch() {
 	char           buf = 0;
 	struct termios old = {0};
@@ -23,13 +25,16 @@ Server::Server(const uint16_t& port, const crow::LogLevel& logLevel) :
 	enableAllEndpoints();
 }
 
+Server::~Server() {
+	if(playerClient != nullptr) (*playerClient).close();
+	for(const auto& client: m_clients)
+		client->close();
+}
+
 void Server::startServer() {
 	std::thread waitForEnterKeyThread(&Server::waitForEnterKey, this);
-
 	m_app.port(m_port).loglevel(m_logLevel).run();
-
 	waitForEnterKeyThread.join();
-
 	Log::Debug("Server Shutdown");
 }
 
@@ -42,20 +47,73 @@ void Server::sendToPlayerClient(const char* text) {
 	(*playerClient).send_text(text);
 }
 
+void Server::killServer() {
+	Log::Debug("Requested Server Shutdown");
+
+	if(playerClient != nullptr) (*playerClient).close();
+	for(const auto& client: m_clients)
+		client->close();
+
+	m_app.stop();
+}
+
 void Server::waitForEnterKey() {
 	while(1) {
-		char ch = getch();
-		if(ch == 12)
-			std::system("clear");
-		else if(ch == 'l' || ch =='i') {
-			// TODO: Implement
-			Log::Info("List Clients");
+		switch(getch()) {
+			case 12:
+				{
+					std::system("clear");
+					break;
+				}
+			case 'd':
+				{
+					Log::Warn("Disconnecting Clients");
+
+					if(playerClient != nullptr)
+						(*playerClient).close();
+					for(const auto& client: m_clients)
+						client->close();
+
+					break;
+				}
+			case 03:
+			case 'q':
+				{
+					killServer();
+					return;
+				}
+			case 'l':
+			case 'i':
+				{
+					if(playerClient == nullptr)
+						Log::Warn("Player Client Not Connected");
+					else
+						Log::Info(
+						    "Player Client: ",
+						    (*playerClient));
+
+					Log::Info("Clients [", m_clients.size(), "]");
+					for(std::uint16_t i = 0; i != m_clients.size();
+					    i++)
+						Log::Info("[", i, "] : ", m_clients[i]);
+
+					break;
+				}
+			case 'p':
+				{
+					Log::Info("Ping All Clients");
+					sendToAllClients(
+					    R"({"type": "info", "message": "ping"})");
+					break;
+				}
+			case '?':
+			case 'h':
+				{
+					Log::Info(s_httpHelp, s_socketHelp);
+					break;
+				}
+			default: break;
 		}
-		else if(ch == 'p') {
-			Log::Info("Ping All Clients");
-			sendToAllClients(R"({"type": "info", "message": "ping"})");
-		} else if(ch == '?' || ch == 'h')
-			Log::Info(s_httpHelp, s_socketHelp);
 	}
 }
 
@@ -170,9 +228,11 @@ void Server::enableClientWebsocket() {
 	    .websocket()
 	    .onopen([&](crow::websocket::connection& conn) {
 		    Log::Success("Client Connected: ", &conn);
+		    m_clients.push_back(&conn);
 	    })
 	    .onclose([&](crow::websocket::connection& conn, const std::string& reason) {
 		    Log::Info("Client Disconnected: ", &conn, " : ", reason);
+		    m_clients.erase(std::find(m_clients.begin(), m_clients.end(), &conn));
 	    })
 	    .onmessage([&](crow::websocket::connection& conn,
 			   const std::string&           data,
