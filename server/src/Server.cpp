@@ -3,10 +3,52 @@
 #include "Log.hpp"
 
 #include <algorithm>
+#include <variant>
+
+enum class WaitMessage : std::uint8_t {
+	code,
+	getIsCurrentLiked,
+	getIsPlaying,
+	getRepeatStatus
+};
+
+static WaitMessage stringToWaitMessage(const std::string& str) {
+	if(str == "code")
+		return WaitMessage::code;
+	else if(str == "getIsCurrentLiked")
+		return WaitMessage::getIsCurrentLiked;
+	else if(str == "getIsPlaying")
+		return WaitMessage::getIsPlaying;
+	else if(str == "getRepeatStatus")
+		return WaitMessage::getRepeatStatus;
+	else
+		throw std::runtime_error("Invalid WaitMessage");
+}
+
+static const char* waitMessageToString(const WaitMessage& waitMessage) {
+	switch(waitMessage) {
+		case WaitMessage::code: return "code";
+		case WaitMessage::getIsCurrentLiked: return "getIsCurrentLiked";
+		case WaitMessage::getIsPlaying: return "getIsPlaying";
+		case WaitMessage::getRepeatStatus: return "getRepeatStatus";
+	}
+}
+
+//static std::string waitMessageToString(const WaitMessage& waitMessage) {
+//switch(waitMessage) {
+//case WaitMessage::code: return "code";
+//case WaitMessage::getIsCurrentLiked: return "getIsCurrentLiked";
+//case WaitMessage::getIsPlaying: return "getIsPlaying";
+//case WaitMessage::getRepeatStatus: return "getRepeatStatus";
+//}
+//}
 
 static char getch() {
-	char           buf = 0;
+	char buf = 0;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-field-initializers"
 	struct termios old = {0};
+#pragma clang diagnostic pop
 	if(tcgetattr(0, &old) < 0) perror("tcsetattr()");
 	old.c_lflag &= ~ICANON;
 	old.c_lflag &= ~ECHO;
@@ -82,6 +124,27 @@ void Server::waitForEnterKey() {
 					killServer();
 					return;
 				}
+			case 'w':
+				{
+					for(auto& [key, value]: waitingList) {
+						if(std::holds_alternative<
+						       crow::response*>(key))
+							Log::Info(
+							    "Rest (",
+							    std::get<0>(key),
+							    ") waiting for  ",
+							    waitMessageToString(value));
+						else if(std::holds_alternative<
+							    crow::websocket::connection*>(
+							    key))
+							Log::Info(
+							    "WebSocket Client (",
+							    std::get<1>(key),
+							    ") waiting for  ",
+							    waitMessageToString(value));
+					}
+					break;
+				}
 			case 'l':
 			case 'i':
 				{
@@ -90,7 +153,7 @@ void Server::waitForEnterKey() {
 					else
 						Log::Info(
 						    "Player Client: ",
-						    (*playerClient));
+						    &(*playerClient));
 
 					Log::Info("Clients [", m_clients.size(), "]");
 					for(std::uint16_t i = 0; i != m_clients.size();
@@ -123,6 +186,46 @@ void Server::enableAllEndpoints() {
 	enableHelpEndpoints();
 	enableHttpClient();
 	enableHtmlClient();
+}
+
+void Server::checkGiveClient(const WaitMessage dataType, const std::string& data) {
+	for(auto& [key, value]: waitingList) {
+		if(value == dataType) {
+			if(std::holds_alternative<crow::response*>(key)) //response
+			{
+				Log::Info(
+				    "Rest Client [",
+				    std::get<1>(key),
+				    "] given '",
+				    waitMessageToString(dataType),
+				    "':'",
+				    data,
+				    "' ");
+
+				std::get<0>(key)->body = data;
+				waitingList.erase(key);
+
+			} else if(std::holds_alternative<crow::websocket::connection*>(
+				      key)) //websocket
+			{
+				std::get<1>(key)->send_text(
+				    std::string(R"({"type": ")") +
+				    waitMessageToString(dataType) + R"(", "message": ")" +
+				    data + R"("})");
+				waitingList.erase(key);
+
+				Log::Info(
+				    "WebSocket Client [",
+				    std::get<1>(key),
+				    "] sent '",
+				    waitMessageToString(dataType),
+				    "':'",
+				    data,
+				    "' ");
+			}
+			break;
+		}
+	}
 }
 
 void Server::enablePlayerClientWebsocket() {
@@ -188,18 +291,26 @@ void Server::enablePlayerClientWebsocket() {
 			    string type(parsedData["type"]);
 			    string message(parsedData["message"]);
 
-			    if(type == "getRepeatStatus") {
+			    if(type == "code") {
+				    Info("Got code response '", message, "'");
+				    checkGiveClient(WaitMessage::code, message);
+			    } else if(type == "getRepeatStatus") {
 				    Info("Repeat Status '", message, "'");
+				    checkGiveClient(
+					WaitMessage::getRepeatStatus,
+					message);
 			    } else if(type == "getIsCurrentLiked") {
 				    Info("Is Current Liked '", message, "'");
+				    checkGiveClient(
+					WaitMessage::getIsCurrentLiked,
+					message);
 			    } else if(type == "getIsPlaying") {
 				    Info("Is Playing '", message, "'");
+				    checkGiveClient(WaitMessage::getIsPlaying, message);
 			    } else if(type == "info") {
 				    Info("Info From Player Client '", message, "'");
 			    } else if(type == "error") {
 				    Error("Error from Player Client '", message, "'");
-			    } else if(type == "code") {
-				    Info("Got code response '", message, "'");
 			    } else {
 				    Error(
 					"Unknown type '",
@@ -251,27 +362,52 @@ void Server::enableClientWebsocket() {
 				    return;
 			    }
 			    crow::json::rvalue parsedData;
+			    std::string        type;
+			    std::string        message;
 			    try {
 				    parsedData = crow::json::load(data);
+				    type       = std::string(parsedData["type"]);
+				    message    = std::string(parsedData["message"]);
 			    } catch(std::runtime_error err) {
 				    conn.send_text(
 					std::string(R"({type: error, "message": ")") +
 					err.what() + "\"}");
 			    }
-			    std::string type(parsedData["type"]);
-			    std::string message(parsedData["message"]);
+
 			    if(type == "code") {
+
+				    waitingList[&conn] = WaitMessage::code;
+
 				    (*playerClient)
 					.send_text(
 					    R"({"type": "code", "message": ")" + message +
 					    "\"}");
+
 			    } else if(type == "command") {
-				    if(message != "")
+				    if(message != "") {
+
+					    if(message == "getRepeatStatus") {
+
+						    waitingList[&conn] =
+							WaitMessage::getRepeatStatus;
+
+					    } else if(message == "getIsCurrentLiked") {
+
+						    waitingList[&conn] =
+							WaitMessage::getIsCurrentLiked;
+
+					    } else if(message == "getIsPlaying") {
+
+						    waitingList[&conn] =
+							WaitMessage::getIsPlaying;
+					    }
+
 					    (*playerClient).send_text(data);
-				    else {
+
+				    } else {
 					    Log::Error("Blank Command: ", message);
 					    conn.send_text(
-						R"({"type": "error", "message": "unknown command ')" +
+						R"({"type": "error", "message": "blank command ')" +
 						message + "'\"}");
 					    return;
 				    }
@@ -314,9 +450,13 @@ void Server::enableHttpClient() {
 
 		std::string code(parsedData["command"]);
 
+		waitingList[&res] = WaitMessage::code;
+
 		(*playerClient)
 		    .send_text(R"({"type": "code", "message": ")" + code + "\"}");
-		res.body = R"({"type": "info", "message": "sending command to client"})";
+		while(waitingList.contains(&res)) {
+			sleep(1);
+		}
 		res.end();
 		return res.body.c_str();
 	});
@@ -325,18 +465,33 @@ void Server::enableHttpClient() {
 						     crow::response&   res,
 						     const std::string command) {
 		Log::Debug("Received REST Command: ", command);
+
+		res.add_header("Access-Control-Allow-Origin", "*");
+		res.add_header("Content-Type", "application/json");
+
 		if(playerClient == nullptr) {
 			res.code = 500;
 			return R"({"type": "error", "message": "client not connected"})";
 		}
-		(*playerClient)
-		    .send_text(R"({"type": "command", "message": ")" + command + "\"}");
-		res.add_header("Access-Control-Allow-Origin", "*");
 
-		res.add_header("Content-Type", "application/json");
-		res.body = R"({"type": "info", "message": "sending command to client"})";
-		res.end();
-		return res.body.c_str();
+		if(command == "getRepeatStatus" || command == "getIsCurrentLiked" ||
+		   command == "getIsPlaying") {
+			waitingList[&res] = stringToWaitMessage(command);
+			(*playerClient)
+			    .send_text(
+				R"({"type": "command", "message": ")" + command + "\"}");
+			while(waitingList.contains(&res)) {
+				sleep(1);
+			}
+			res.end();
+			return res.body.c_str();
+		} else {
+			(*playerClient)
+			    .send_text(
+				R"({"type": "command", "message": ")" + command + "\"}");
+			res.end();
+			return R"({"type": "info", "message": "sending command to client"})";
+		}
 	});
 }
 
@@ -348,10 +503,10 @@ void Server::enableHtmlClient() {
 		res.end();
 	});
 
-	CROW_ROUTE(m_app, "/client/http.js")
+	CROW_ROUTE(m_app, "/client/rest.js")
 	([](const crow::request&, crow::response& res) {
 		res.set_static_file_info("/home/shawn/dev/cpp/CLIProjeccts/"
-					 "SpotifyHack/client/http.js");
+					 "SpotifyHack/client/rest.js");
 		res.end();
 	});
 

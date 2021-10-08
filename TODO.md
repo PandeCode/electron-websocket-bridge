@@ -1,4 +1,6 @@
 # Todo
+	- Get album art
+	- Make Player Data
 	- Make python bindngs
 	- Return Values
 	- Fix naming schema

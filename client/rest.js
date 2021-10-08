@@ -1,4 +1,4 @@
-let $ = document.querySelector.bind(document);
+$ = document.querySelector.bind(document);
 
 const BASE_URL = "http://localhost:8080/command/";
 

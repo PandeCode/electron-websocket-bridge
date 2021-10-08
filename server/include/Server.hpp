@@ -1,12 +1,21 @@
 #pragma once
 #include "crow/app.h"
 
+#include <unordered_map>
+#include <variant>
 #include <vector>
+
+enum class WaitMessage : std::uint8_t;
 
 class Server {
 
 	static const char* const s_socketHelp;
 	static const char* const s_httpHelp;
+
+	std::unordered_map<
+	    std::variant<crow::response*, crow::websocket::connection*>,
+	    WaitMessage>
+	    waitingList;
 
 	crow::SimpleApp m_app;
 	uint16_t        m_port;
@@ -14,6 +23,8 @@ class Server {
 
 	std::vector<crow::websocket::connection*> m_clients;
 	std::atomic<crow::websocket::connection*> playerClient = nullptr;
+
+	void checkGiveClient(const WaitMessage dataType, const std::string& data);
 
 	void waitForEnterKey();
 

@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.20)
 
-set(CXX_STANDARD 17)
+set(CXX_STANDARD 23)
 set(CXX_STANDARD_REQUIRED ON)
 set(CXX_EXTENSIONS ON)
 
 set(CMAKE_C_COMPILER /usr/bin/clang CACHE PATH "" FORCE)
 set(CMAKE_CXX_COMPILER /usr/bin/clang++ CACHE PATH "" FORCE)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fuse-ld=lld -Wno-unused-command-line-argument") # -v
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++2b -fuse-ld=lld -Wno-unused-command-line-argument") # -v
 
+# cmake-format: off
 set(CMAKE_C_FLAGS_INIT "-Wall")
 set(CMAKE_C_FLAGS_DEBUG_INIT "-g")
 set(CMAKE_C_FLAGS_MINSIZEREL_INIT "-Os -DNDEBUG")
@@ -18,6 +19,7 @@ set(CMAKE_CXX_FLAGS_DEBUG_INIT "-g")
 set(CMAKE_CXX_FLAGS_MINSIZEREL_INIT "-Os -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT "-O2 -g")
+# cmake-format: on
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)

@@ -1,4 +1,4 @@
-let $ = document.querySelector.bind(document);
+$ = document.querySelector.bind(document);
 
 const nextBtn = $("#nextBtn");
 const playBtn = $("#playBtn");

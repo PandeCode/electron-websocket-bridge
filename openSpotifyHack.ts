@@ -188,6 +188,10 @@ const SpotifyHackApi = {
 			return false;
 		}
 
+		if (SpotifyHackApi.ws != null)
+			if (SpotifyHackApi.ws.readyState === WebSocket.OPEN)
+				clearInterval(SpotifyHackApi.interval);
+
 		SpotifyHackApi.ws.addEventListener("open", (event: Event) => {
 			if (SpotifyHackApi.interval != null) {
 				clearInterval(SpotifyHackApi.interval);
@@ -206,6 +210,9 @@ const SpotifyHackApi = {
 			if (SpotifyHackApi.interval === null)
 				SpotifyHackApi.interval = setInterval(() => {
 					SpotifyHackApi.startListening();
+					if (SpotifyHackApi.ws != null)
+						if (SpotifyHackApi.ws.readyState === WebSocket.OPEN)
+							clearInterval(SpotifyHackApi.interval);
 				}, 2500);
 		});
 
