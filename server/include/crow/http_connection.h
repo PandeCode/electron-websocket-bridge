@@ -9,6 +9,7 @@
 
 #include "crow/http_parser_merged.h"
 
+#include "crow/common.h"
 #include "crow/parser.h"
 #include "crow/http_response.h"
 #include "crow/logging.h"
@@ -236,6 +237,7 @@ namespace crow
                 }
                 else
                 {
+                    CROW_LOG_ERROR << "Could not start adaptor: " << ec.message();
                     check_destroy();
                 }
             });
@@ -357,27 +359,29 @@ namespace crow
                 (*middlewares_, ctx_, req_, res);
             }
 #ifdef CROW_ENABLE_COMPRESSION
-            std::string accept_encoding = req_.get_header_value("Accept-Encoding");
-            if (!accept_encoding.empty() && res.compressed)
-            {
-                switch (handler_->compression_algorithm())
+            if (handler_->compression_used()) {
+                std::string accept_encoding = req_.get_header_value("Accept-Encoding");
+                if (!accept_encoding.empty() && res.compressed)
                 {
-                    case compression::DEFLATE:
-                        if (accept_encoding.find("deflate") != std::string::npos)
-                        {
-                            res.body = compression::compress_string(res.body, compression::algorithm::DEFLATE);
-                            res.set_header("Content-Encoding", "deflate");
-                        }
-                        break;
-                    case compression::GZIP:
-                        if (accept_encoding.find("gzip") != std::string::npos)
-                        {
-                            res.body = compression::compress_string(res.body, compression::algorithm::GZIP);
-                            res.set_header("Content-Encoding", "gzip");
-                        }
-                        break;
-                    default:
-                        break;
+                    switch (handler_->compression_algorithm())
+                    {
+                        case compression::DEFLATE:
+                            if (accept_encoding.find("deflate") != std::string::npos)
+                            {
+                                res.body = compression::compress_string(res.body, compression::algorithm::DEFLATE);
+                                res.set_header("Content-Encoding", "deflate");
+                            }
+                            break;
+                        case compression::GZIP:
+                            if (accept_encoding.find("gzip") != std::string::npos)
+                            {
+                                res.body = compression::compress_string(res.body, compression::algorithm::GZIP);
+                                res.set_header("Content-Encoding", "gzip");
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 #endif
@@ -418,33 +422,48 @@ namespace crow
                 return;
             }
 
+            // Keep in sync with common.h/status
             static std::unordered_map<int, std::string> statusCodes = {
-                {200, "HTTP/1.1 200 OK\r\n"},
-                {201, "HTTP/1.1 201 Created\r\n"},
-                {202, "HTTP/1.1 202 Accepted\r\n"},
-                {204, "HTTP/1.1 204 No Content\r\n"},
+                {status::CONTINUE, "HTTP/1.1 100 Continue\r\n"},
+                {status::SWITCHING_PROTOCOLS, "HTTP/1.1 101 Switching Protocols\r\n"},
 
-                {300, "HTTP/1.1 300 Multiple Choices\r\n"},
-                {301, "HTTP/1.1 301 Moved Permanently\r\n"},
-                {302, "HTTP/1.1 302 Found\r\n"},
-                {303, "HTTP/1.1 303 See Other\r\n"},
-                {304, "HTTP/1.1 304 Not Modified\r\n"},
-                {307, "HTTP/1.1 307 Temporary Redirect\r\n"},
-                {308, "HTTP/1.1 308 Permanent Redirect\r\n"},
+                {status::OK, "HTTP/1.1 200 OK\r\n"},
+                {status::CREATED, "HTTP/1.1 201 Created\r\n"},
+                {status::ACCEPTED, "HTTP/1.1 202 Accepted\r\n"},
+                {status::NON_AUTHORITATIVE_INFORMATION, "HTTP/1.1 203 Non-Authoritative Information\r\n"},
+                {status::NO_CONTENT, "HTTP/1.1 204 No Content\r\n"},
+                {status::RESET_CONTENT, "HTTP/1.1 205 Reset Content\r\n"},
+                {status::PARTIAL_CONTENT, "HTTP/1.1 206 Partial Content\r\n"},
 
-                {400, "HTTP/1.1 400 Bad Request\r\n"},
-                {401, "HTTP/1.1 401 Unauthorized\r\n"},
-                {403, "HTTP/1.1 403 Forbidden\r\n"},
-                {404, "HTTP/1.1 404 Not Found\r\n"},
-                {405, "HTTP/1.1 405 Method Not Allowed\r\n"},
-                {413, "HTTP/1.1 413 Payload Too Large\r\n"},
-                {422, "HTTP/1.1 422 Unprocessable Entity\r\n"},
-                {429, "HTTP/1.1 429 Too Many Requests\r\n"},
+                {status::MULTIPLE_CHOICES, "HTTP/1.1 300 Multiple Choices\r\n"},
+                {status::MOVED_PERMANENTLY, "HTTP/1.1 301 Moved Permanently\r\n"},
+                {status::FOUND, "HTTP/1.1 302 Found\r\n"},
+                {status::SEE_OTHER, "HTTP/1.1 303 See Other\r\n"},
+                {status::NOT_MODIFIED, "HTTP/1.1 304 Not Modified\r\n"},
+                {status::TEMPORARY_REDIRECT, "HTTP/1.1 307 Temporary Redirect\r\n"},
+                {status::PERMANENT_REDIRECT, "HTTP/1.1 308 Permanent Redirect\r\n"},
 
-                {500, "HTTP/1.1 500 Internal Server Error\r\n"},
-                {501, "HTTP/1.1 501 Not Implemented\r\n"},
-                {502, "HTTP/1.1 502 Bad Gateway\r\n"},
-                {503, "HTTP/1.1 503 Service Unavailable\r\n"},
+                {status::BAD_REQUEST, "HTTP/1.1 400 Bad Request\r\n"},
+                {status::UNAUTHORIZED, "HTTP/1.1 401 Unauthorized\r\n"},
+                {status::FORBIDDEN, "HTTP/1.1 403 Forbidden\r\n"},
+                {status::NOT_FOUND, "HTTP/1.1 404 Not Found\r\n"},
+                {status::METHOD_NOT_ALLOWED, "HTTP/1.1 405 Method Not Allowed\r\n"},
+                {status::PROXY_AUTHENTICATION_REQUIRED, "HTTP/1.1 407 Proxy Authentication Required\r\n"},
+                {status::CONFLICT, "HTTP/1.1 409 Conflict\r\n"},
+                {status::GONE, "HTTP/1.1 410 Gone\r\n"},
+                {status::PAYLOAD_TOO_LARGE, "HTTP/1.1 413 Payload Too Large\r\n"},
+                {status::UNSUPPORTED_MEDIA_TYPE, "HTTP/1.1 415 Unsupported Media Type\r\n"},
+                {status::RANGE_NOT_SATISFIABLE, "HTTP/1.1 416 Range Not Satisfiable\r\n"},
+                {status::EXPECTATION_FAILED, "HTTP/1.1 417 Expectation Failed\r\n"},
+                {status::PRECONDITION_REQUIRED, "HTTP/1.1 428 Precondition Required\r\n"},
+                {status::TOO_MANY_REQUESTS, "HTTP/1.1 429 Too Many Requests\r\n"},
+                {status::UNAVAILABLE_FOR_LEGAL_REASONS, "HTTP/1.1 451 Unavailable For Legal Reasons\r\n"},
+
+                {status::INTERNAL_SERVER_ERROR, "HTTP/1.1 500 Internal Server Error\r\n"},
+                {status::NOT_IMPLEMENTED, "HTTP/1.1 501 Not Implemented\r\n"},
+                {status::BAD_GATEWAY, "HTTP/1.1 502 Bad Gateway\r\n"},
+                {status::SERVICE_UNAVAILABLE, "HTTP/1.1 503 Service Unavailable\r\n"},
+                {status::VARIANT_ALSO_NEGOTIATES, "HTTP/1.1 506 Variant Also Negotiates\r\n"},
             };
 
             static std::string seperator = ": ";

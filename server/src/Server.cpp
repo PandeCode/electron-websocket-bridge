@@ -2,8 +2,6 @@
 
 #include "Log.hpp"
 
-#include <algorithm>
-#include <variant>
 
 enum class WaitMessage : std::uint8_t {
 	code,
@@ -189,6 +187,7 @@ void Server::enableAllEndpoints() {
 }
 
 void Server::checkGiveClient(const WaitMessage dataType, const std::string& data) {
+	Log::Debug("Key ");
 	for(auto& [key, value]: waitingList) {
 		if(value == dataType) {
 			if(std::holds_alternative<crow::response*>(key)) //response
@@ -201,9 +200,12 @@ void Server::checkGiveClient(const WaitMessage dataType, const std::string& data
 				    "':'",
 				    data,
 				    "' ");
-
 				std::get<0>(key)->body = data;
+				Log::Debug("Set Body");
 				waitingList.erase(key);
+				Log::Debug("Erased Key");
+				httpLocked = false;
+				Log::Debug("Http Unlocked");
 
 			} else if(std::holds_alternative<crow::websocket::connection*>(
 				      key)) //websocket
@@ -222,6 +224,8 @@ void Server::checkGiveClient(const WaitMessage dataType, const std::string& data
 				    "':'",
 				    data,
 				    "' ");
+			}else{
+				Log::Error("Neither");
 			}
 			break;
 		}
@@ -454,9 +458,29 @@ void Server::enableHttpClient() {
 
 		(*playerClient)
 		    .send_text(R"({"type": "code", "message": ")" + code + "\"}");
-		while(waitingList.contains(&res)) {
+
+		// wait for signal from other thread
+		Log::Info(
+		    "Rest Sent callback command to player '",
+		    code,
+		    "' for '",
+		    &res,
+		    "'");
+		httpLocked = true;
+		Log::Debug("Http Locked");
+		while(httpLocked) {
+			Log::Info("Locked Command");
 			sleep(1);
 		}
+		Log::Info(
+		    "Rest Received callback command to player '",
+		    code,
+		    "' for '",
+		    &res,
+		    "' data '",
+		    res.body,
+		    "'");
+
 		res.end();
 		return res.body.c_str();
 	});
@@ -480,9 +504,28 @@ void Server::enableHttpClient() {
 			(*playerClient)
 			    .send_text(
 				R"({"type": "command", "message": ")" + command + "\"}");
-			while(waitingList.contains(&res)) {
+
+			// wait for signal from other thread
+			Log::Info(
+			    "Rest Sent callback command to player '",
+			    command,
+			    "' for '",
+			    &res,
+			    "'");
+			httpLocked = true;
+			while(httpLocked) {
+				Log::Info("Locked Command");
 				sleep(1);
 			}
+			Log::Info(
+			    "Rest Received callback command to player '",
+			    command,
+			    "' for '",
+			    &res,
+			    "' data '",
+			    res.body,
+			    "'");
+
 			res.end();
 			return res.body.c_str();
 		} else {

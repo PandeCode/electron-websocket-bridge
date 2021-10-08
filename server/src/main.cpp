@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
 #	if CMAKE_BUILD_TYPE_RELEASE
 	auto logLevel = crow::LogLevel::CRITICAL;
 #	else
-	auto logLevel = crow::LogLevel::DEBUG;
+	auto logLevel = crow::LogLevel::INFO;
 #endif
 
 	Server server(port, logLevel);

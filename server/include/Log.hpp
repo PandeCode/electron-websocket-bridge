@@ -15,9 +15,9 @@
 #define SWCB STREAM_WRAP_COLOR_BRACE
 
 namespace    Log          {
-	template <typename... Args> inline void Info(const    Args&... args) { std::cout << SWCB("INFO   ", INFO_COLOR);    (std::cout << ... << args) << std::endl; }
-	template <typename... Args> inline void Error(const   Args&... args) { std::cout << SWCB("ERROR  ", ERROR_COLOR);   (std::cout << ... << args) << std::endl; }
-	template <typename... Args> inline void Warn(const    Args&... args) { std::cout << SWCB("WARN   ", WARN_COLOR);    (std::cout << ... << args) << std::endl; }
-	template <typename... Args> inline void Debug(const   Args&... args) { std::cout << SWCB("DEBUG  ", DEBUG_COLOR);   (std::cout << ... << args) << std::endl; }
+	template <typename... Args> inline void Info(const    Args&... args) { std::cout << SWCB(" INFO  ", INFO_COLOR);    (std::cout << ... << args) << std::endl; }
+	template <typename... Args> inline void Error(const   Args&... args) { std::cout << SWCB(" ERROR ", ERROR_COLOR);   (std::cout << ... << args) << std::endl; }
+	template <typename... Args> inline void Warn(const    Args&... args) { std::cout << SWCB(" WARN  ", WARN_COLOR);    (std::cout << ... << args) << std::endl; }
+	template <typename... Args> inline void Debug(const   Args&... args) { std::cout << SWCB(" DEBUG ", DEBUG_COLOR);   (std::cout << ... << args) << std::endl; }
 	template <typename... Args> inline void Success(const Args&... args) { std::cout << SWCB("SUCCESS", SUCCESS_COLOR); (std::cout << ... << args) << std::endl; }
 }
