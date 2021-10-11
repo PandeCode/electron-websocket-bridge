@@ -6,71 +6,94 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-		<link href="client/tailwind.css" rel="stylesheet" />
 		<link rel="icon" href="data:;base64,=" />
 
+		<!-- CSS only -->
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+			crossorigin="anonymous"
+		/>
+		<!-- JavaScript Bundle with Popper -->
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+			crossorigin="anonymous"
+		></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
+		/>
+
 		<script type="text/javascript" src="client/socket.js" defer></script>
-
 		<script type="text/javascript" src="client/rest.js" defer></script>
-
 		<script type="text/javascript" src="client/rtc.js" defer></script>
+
+		<style>
+			.main {
+				width: 100%;
+				border: 10px solid black;
+			}
+		</style>
 	</head>
 
 	<body>
-		<h1>WebSocket</h1>
+		<div class="main d-flex bd-highlight">
+			<!-- prettier-ignore -->
+			<div class="websocket p-2 flex-fill bd-highlight">
+				<h1><button id="activateWebSocketBtn"  class="btn btn-dark" >WebSocket</button></h1>
+				<div id="websocketResponse" > </div>
 
-		<h2><button id="activateWebSocketBtn">Activate WebSocket</button></h2>
+				<div class="d-grid gap-2 col-6 mx-auto">
+					<button class="btn btn-dark" id="nextBtn"              disabled><i class="bi bi-skip-end-circle"  ></i> Next              </button>
+					<button class="btn btn-dark" id="playBtn"              disabled><i class="bi bi-play-circle"      ></i> Play              </button>
+					<button class="btn btn-dark" id="pauseBtn"             disabled><i class="bi bi-pause-circle"     ></i> Pause             </button>
+					<button class="btn btn-dark" id="previousBtn"          disabled><i class="bi bi-skip-start-circle"></i> Previous          </button>
+					<button class="btn btn-dark" id="playPauseBtn"         disabled><i class="bi bi-play-circle"      ></i> PlayPause         </button>
 
-		<button id="nextBtn">Next</button>
-		<button id="playBtn">Play</button>
-		<button id="pauseBtn">Pause</button>
-		<button id="previousBtn">Previous</button>
-		<button id="playPauseBtn">PlayPause</button>
-		<button id="playStateBtn">PlayState</button>
-		<button id="likeCurrentBtn">LikeCurrent</button>
-		<button id="enableRepeatBtn">EnableRepeat</button>
-		<button id="repeatStatusBtn">RepeatStatus</button>
-		<button id="toggleShuffleBtn">ToggleShuffle</button>
-		<button id="dislikeCurrentBtn">DislikeCurrent</button>
-		<button id="isCurrentLikedBtn">IsCurrentLiked</button>
-		<button id="enableRepeatOneBtn">EnableRepeatOne</button>
-		<button id="disableRepeatOneBtn">DisableRepeatOne</button>
-		<button id="toggleLikeCurrentBtn">ToggleLikeCurrent</button>
+					<button class="btn btn-dark" id="toggleLikeCurrentBtn" disabled><i class="bi bi-"                 ></i> ToggleLikeCurrent </button>
+					<button class="btn btn-dark" id="likeCurrentBtn"       disabled><i class="bi bi-"                 ></i> LikeCurrent       </button>
+					<button class="btn btn-dark" id="dislikeCurrentBtn"    disabled><i class="bi bi-"                 ></i> DislikeCurrent    </button>
+					<button class="btn btn-dark" id="isCurrentLikedBtn"    disabled><i class="bi bi-"                 ></i> IsCurrentLiked    </button>
 
-		<hr />
-		<h1>RestApi</h1>
+					<button class="btn btn-dark" id="enableRepeatBtn"      disabled><i class="bi bi-"                 ></i> EnableRepeat      </button>
+					<button class="btn btn-dark" id="enableRepeatOneBtn"   disabled><i class="bi bi-"                 ></i> EnableRepeatOne   </button>
+					<button class="btn btn-dark" id="disableRepeatBtn"     disabled><i class="bi bi-"                 ></i> DisableRepeat     </button>
 
-		<div class="flex-auto flex space-x-3">
+					<button class="btn btn-dark" id="toggleShuffleBtn"     disabled><i class="bi bi-shuffle-circle"   ></i> ToggleShuffle     </button>
+
+					<button class="btn btn-dark" id="getRepeatStatusBtn"      disabled><i class="bi bi-"                 ></i> RepeatStatus      </button>
+				</div>
+
+			</div>
+
 			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="nextRestBtn">Next</button>
-			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="playRestBtn">Play</button>
-			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="pauseRestBtn">Pause</button>
-			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="previousRestBtn">Previous</button>
-			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="playPauseRestBtn">PlayPause</button>
-			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="playStateRestBtn">PlayState</button>
-			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="likeCurrentRestBtn">LikeCurrent</button>
-			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="enableRepeatRestBtn">EnableRepeat</button>
-			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="repeatStatusRestBtn">RepeatStatus</button>
-			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="toggleShuffleRestBtn">ToggleShuffle</button>
-			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="dislikeCurrentRestBtn">DislikeCurrent</button>
-			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="isCurrentLikedRestBtn">IsCurrentLiked</button>
-			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="enableRepeatOneRestBtn">EnableRepeatOne</button>
-			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="disableRepeatOneRestBtn">DisableRepeatOne</button>
-			<!-- prettier-ignore -->
-			<button class="w-1/2 flex items-center justify-center rounded-md bg-black text-white" id="toggleLikeCurrentRestBtn">ToggleLikeCurrent</button>
+			<div class="rest p-2 flex-fill bd-highlight">
+				<h1>RestApi</h1>
+				<div id="restResponse"> </div>
+
+				<div class="d-grid gap-2 col-6 mx-auto">
+					<button class="btn btn-dark" id="nextRestBtn"              ><i class="bi bi-skip-end"   ></i> Next              </button>
+					<button class="btn btn-dark" id="playRestBtn"              ><i class="bi bi-play"       ></i> Play              </button>
+					<button class="btn btn-dark" id="pauseRestBtn"             ><i class="bi bi-pause"      ></i> Pause             </button>
+					<button class="btn btn-dark" id="previousRestBtn"          ><i class="bi bi-skip-start" ></i> Previous          </button>
+					<button class="btn btn-dark" id="playPauseRestBtn"         ><i class="bi bi-play-pause" ></i> PlayPause         </button>
+
+					<button class="btn btn-dark" id="likeCurrentRestBtn"       ><i class="bi bi-like"       ></i> LikeCurrent       </button>
+					<button class="btn btn-dark" id="toggleLikeCurrentRestBtn" ><i class="bi bi-heart-fill" ></i> ToggleLikeCurrent </button>
+					<button class="btn btn-dark" id="dislikeCurrentRestBtn"    ><i class="bi bi-dislike"    ></i> DislikeCurrent    </button>
+					<button class="btn btn-dark" id="isCurrentLikedRestBtn"    ><i class="bi bi-heart"      ></i> IsCurrentLiked    </button>
+
+					<button class="btn btn-dark" id="enableRepeatRestBtn"      ><i class="bi bi-repeat"     ></i> EnableRepeat      </button>
+					<button class="btn btn-dark" id="enableRepeatOneRestBtn"   ><i class="bi bi-repeat-one" ></i> EnableRepeatOne   </button>
+					<button class="btn btn-dark" id="disableRepeatOneRestBtn"  ><i class="bi bi-repeat"     ></i> DisableRepeat     </button>
+
+					<button class="btn btn-dark" id="toggleShuffleRestBtn"     ><i class="bi bi-shuffle"    ></i> ToggleShuffle     </button>
+
+					<button class="btn btn-dark" id="repeatStatusRestBtn"      ><i class="bi bi-repeat"     ></i> RepeatStatus      </button>
+				</div>
+			</div>
 		</div>
 	</body>
 </html>

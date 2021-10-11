@@ -17,9 +17,6 @@ $("#previousRestBtn").addEventListener("click", () => {
 $("#playPauseRestBtn").addEventListener("click", () => {
 	fetch(BASE_URL + "playPause").then(d => console.log(d));
 });
-$("#playStateRestBtn").addEventListener("click", () => {
-	fetch(BASE_URL + "playState").then(d => console.log(d));
-});
 $("#likeCurrentRestBtn").addEventListener("click", () => {
 	fetch(BASE_URL + "likeCurrent").then(d => console.log(d));
 });

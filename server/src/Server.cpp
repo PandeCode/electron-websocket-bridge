@@ -542,13 +542,6 @@ void Server::enableHttpClient() {
 }
 
 void Server::enableHtmlClient() {
-	CROW_ROUTE(m_app, "/client/tailwind.css")
-	([](const crow::request&, crow::response& res) {
-		res.set_static_file_info("/home/shawn/dev/cpp/CLIProjeccts/"
-					 "SpotifyHack/client/tailwind.css");
-		res.end();
-	});
-
 	CROW_ROUTE(m_app, "/client/rest.js")
 	([](const crow::request&, crow::response& res) {
 		res.set_static_file_info("/home/shawn/dev/cpp/CLIProjeccts/"
