@@ -73,7 +73,7 @@ Server::~Server() {
 
 void Server::startServer() {
 	std::thread waitForEnterKeyThread(&Server::waitForEnterKey, this);
-	m_app.port(m_port).loglevel(m_logLevel).run();
+	m_app.port(m_port).loglevel(m_logLevel).multithreaded().run();
 	waitForEnterKeyThread.join();
 	Log::Debug("Server Shutdown");
 }
@@ -192,6 +192,8 @@ void Server::checkGiveClient(const WaitMessage dataType, const std::string& data
 		if(value == dataType) {
 			if(std::holds_alternative<crow::response*>(key)) //response
 			{
+
+				Log::Info("Yes");
 				Log::Info(
 				    "Rest Client [",
 				    std::get<1>(key),
@@ -468,6 +470,7 @@ void Server::enableHttpClient() {
 		    "'");
 		httpLocked = true;
 		Log::Debug("Http Locked");
+
 		while(httpLocked) {
 			Log::Info("Locked Command");
 			sleep(1);
@@ -593,17 +596,17 @@ constexpr const char* const Server::s_httpHelp   = R"(Socket Help:
 /command/dislikeCurrent
 "command/enableRepeat
 /command/enableRepeatOne
-/command/isCurrentLiked
 /command/likeCurrent
 /command/next
 /command/pause
 /command/play
 /command/playPause
-/command/getIsPlaying
-"command/previous
-/command/repeatStatus
+/command/previous
 /command/toggleLikeCurrent
 /command/toggleShuffle
+
+/command/getInfo
+
 [POST] /code
 Examples
 	curl -# -X POST -d '{"command": "location.href=location.href"}' 'http://localhost:8080/code'

@@ -1,0 +1,20 @@
+#!/bin/env sh
+
+case "$1" in
+	"open" | "openSpotifyHack.ts")
+		echo Compiling openSpotifyHack
+		tsc ./openSpotifyHack.ts --outDir ~/dev/extensions/browser/MyExtension/dist/
+		;;
+
+	"spotify" | "spotifyHack.ts")
+		echo SpotifyHack
+		tsc ./spotifyHack.ts --outDir ~/.config/spicetify/Extensions/
+		;;
+
+	*)
+		echo Compiling Both
+		tsc ./openSpotifyHack.ts --outDir ~/dev/extensions/browser/MyExtension/dist/
+		tsc ./spotifyHack.ts --outDir ~/.config/spicetify/Extensions/
+		;;
+
+esac

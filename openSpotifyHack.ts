@@ -1,92 +1,67 @@
-const SpotifyHackApi = {
-	runCode: (code: string) => eval(code),
-
-	next: () =>
-		document
-			.querySelector<HTMLButtonElement>(
-				"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > div.player-controls__right > button",
-			)
-			.click(),
-
-	previous: () =>
-		document
-			.querySelector<HTMLButtonElement>(
-				"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > div.player-controls__left > button:nth-child(2)",
-			)
-			.click(),
-
-	isShuffleOn: () =>
-		document.querySelector<HTMLButtonElement>(
-			"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > div.player-controls__left > button",
-		).ariaLabel === "Disable shuffle",
-
-	toggleShuffle: () =>
-		document
-			.querySelector<HTMLButtonElement>(
-				"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > div.player-controls__left > button",
-			)
-			.click(),
-
-	shuffleOn: () => {
-		if (!SpotifyHackApi.isShuffleOn())
-			document
-				.querySelector<HTMLButtonElement>(
-					"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > div.player-controls__left > button",
-				)
-				.click();
-	},
-
-	shuffleOff: () => {
-		if (SpotifyHackApi.isShuffleOn())
-			document
-				.querySelector<HTMLButtonElement>(
-					"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > div.player-controls__left > button",
-				)
-				.click();
-	},
-
-	getPlayState: () => {
-		if (SpotifyHackApi.isPlaying()) return "Playing";
-		else return "Paused";
-	},
-
-	isPlaying: () =>
-		document.querySelector<HTMLButtonElement>(
-			"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > button",
-		).ariaLabel === "Pause",
-
-	playPause: () =>
-		document
-			.querySelector<HTMLButtonElement>(
-				"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > button",
-			)
-			.click(),
-	play: () => {
-		if (!SpotifyHackApi.isPlaying())
-			document
-				.querySelector<HTMLButtonElement>(
-					"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > button",
-				)
-				.click();
-	},
-	pause: () => {
-		if (SpotifyHackApi.isPlaying())
-			document
-				.querySelector<HTMLButtonElement>(
-					"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > button",
-				)
-				.click();
-	},
-
-	repeatElementSelector:
+const Hackify = {
+	_likeBtn:
+		"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > button",
+	_currentSongAlbumArt:
+		"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div > div > a > div > div > div > img",
+	_currentSong:
+		"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div > div.standalone-ellipsis-one-line > span > a",
+	_currentSongArtist:
+		"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div > div.standalone-ellipsis-one-line > span > span > a",
+	_nextBtn:
+		"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > div.player-controls__right > button",
+	_previousBtn:
+		"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > div.player-controls__left > button:nth-child(2)",
+	_playPauseBtn:
+		"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > button",
+	_shuffleBtn:
+		"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > div.player-controls__left > button",
+	_repeatBtn:
 		"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div.player-controls__buttons > div.player-controls__right > button:nth-child(2)",
 
-	getRepeatStatus: () => {
-		switch (
-			document.querySelector<HTMLButtonElement>(
-				SpotifyHackApi.repeatElementSelector,
-			).ariaLabel
-		) {
+	_click: (selector: string): void =>
+		document.querySelector<HTMLElement>(selector).click(),
+	_getArialLabel: (selector: string): string =>
+		document.querySelector<HTMLElement>(selector).ariaLabel,
+	_getInnerText: (selector: string): string =>
+		document.querySelector<HTMLElement>(selector).innerText,
+	_getElement: (selector: string): HTMLElement =>
+		document.querySelector<HTMLElement>(selector),
+
+	getInfo: () => ({
+		currentSong: Hackify.getCurrentSong(),
+		currentSongArtist: Hackify.getCurrentSongArtist(),
+		currentSongAlbumArt: Hackify.getCurrentSongAlbumArt(),
+		isCurrentLiked: Hackify.getIsCurrentLiked(),
+		repeatStatus: Hackify.getRepeatStatus(),
+		shuffleStatus: Hackify.getIsShuffleOn(),
+	}),
+
+	getCurrentSongArtist: () =>
+		Hackify._getInnerText(Hackify._currentSongArtist),
+	getCurrentSong: () => Hackify._getInnerText(Hackify._currentSong),
+	getCurrentSongAlbumArt: () =>
+		document.querySelector<HTMLImageElement>(Hackify._currentSongAlbumArt)
+			.src,
+
+	next: () => Hackify._click(Hackify._nextBtn),
+	previous: () => Hackify._click(Hackify._previousBtn),
+
+	getIsShuffleOn: () =>
+		Hackify._getArialLabel(Hackify._shuffleBtn) === "Disable shuffle",
+	toggleShuffle: () => Hackify._click(Hackify._shuffleBtn),
+	shuffleOn: () =>
+		Hackify.getIsShuffleOn() || Hackify._click(Hackify._shuffleBtn),
+	shuffleOff: () =>
+		Hackify.getIsShuffleOn() && Hackify._click(Hackify._shuffleBtn),
+
+	getIsPlaying: () =>
+		Hackify._getArialLabel(Hackify._playPauseBtn) === "Pause",
+	playPause: () => Hackify._click(Hackify._playPauseBtn),
+	play: () => Hackify.getIsPlaying() || Hackify.playPause(),
+	pause: () => Hackify.getIsPlaying() && Hackify.playPause(),
+
+	getRepeatStatus: (): "Disabled" | "Repeat" | "Repeat One" | "Unknown" => {
+		switch (Hackify._getArialLabel(Hackify._repeatBtn)) {
 			case "Enable repeat":
 				return "Disabled";
 			case "Enable repeat one":
@@ -94,243 +69,177 @@ const SpotifyHackApi = {
 			case "Disable repeat":
 				return "Repeat One";
 			default:
-				console.error("Other Repeat Label, Very ");
+				console.error("Other Repeat Label, Very Bad");
 				return "Unknown";
 		}
 	},
 
 	disableRepeat: () => {
-		const repeatElement = document.querySelector<HTMLButtonElement>(
-			SpotifyHackApi.repeatElementSelector,
-		);
-		if (SpotifyHackApi.getRepeatStatus() === "Repeat") {
-			repeatElement.click();
-			repeatElement.click();
-		} else if (SpotifyHackApi.getRepeatStatus() === "Repeat One") {
-			repeatElement.click();
+		const re = Hackify._getElement(Hackify._repeatBtn);
+		if (Hackify.getRepeatStatus() === "Repeat") {
+			re.click();
+			re.click();
+		} else if (Hackify.getRepeatStatus() === "Repeat One") {
+			re.click();
 		}
 	},
 
 	enableRepeatOne: () => {
 		const repeatElement = document.querySelector<HTMLButtonElement>(
-			SpotifyHackApi.repeatElementSelector,
+			Hackify._repeatBtn,
 		);
-
-		if (SpotifyHackApi.getRepeatStatus() === "Disabled") {
+		if (Hackify.getRepeatStatus() === "Disabled") {
 			repeatElement.click();
 			repeatElement.click();
-		} else if (SpotifyHackApi.getRepeatStatus() === "Repeat") {
+		} else if (Hackify.getRepeatStatus() === "Repeat") {
 			repeatElement.click();
 		}
 	},
 
 	enableRepeat: () => {
 		const repeatElement = document.querySelector<HTMLButtonElement>(
-			SpotifyHackApi.repeatElementSelector,
+			Hackify._repeatBtn,
 		);
-
-		if (SpotifyHackApi.getRepeatStatus() === "Repeat") {
+		if (Hackify.getRepeatStatus() === "Repeat") {
 			repeatElement.click();
 			repeatElement.click();
-		} else if (SpotifyHackApi.getRepeatStatus() === "Repeat One") {
+		} else if (Hackify.getRepeatStatus() === "Repeat One") {
 			repeatElement.click();
 		}
 	},
 
-	likeElementSelector:
-		"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > button",
-
 	getIsCurrentLiked: () =>
-		document.querySelector<HTMLButtonElement>(
-			SpotifyHackApi.likeElementSelector,
-		).ariaChecked === "true",
+		Hackify._getElement(Hackify._likeBtn).ariaChecked === "true",
+	toggleLike: () => Hackify._click(Hackify._likeBtn),
+	likeCurrent: () => Hackify.getIsCurrentLiked() || Hackify.toggleLike(),
+	dislikeCurrent: () => Hackify.getIsCurrentLiked() && Hackify.toggleLike(),
 
-	toggleLikeCurrent: () =>
-		document
-			.querySelector<HTMLButtonElement>(
-				SpotifyHackApi.likeElementSelector,
-			)
-			.click(),
+	/** @type {WebSocket} */ ws: null,
 
-	likeCurrent: () =>
-		SpotifyHackApi.getIsCurrentLiked() ||
-		SpotifyHackApi.toggleLikeCurrent(),
-	dislikeCurrent: () =>
-		SpotifyHackApi.getIsCurrentLiked() &&
-		SpotifyHackApi.toggleLikeCurrent(),
+	/** @type {number} */ interval: null,
 
-	/** @type {WebSocket} */
-	ws: null,
-	/** @type {number} */
-	interval: null,
+	/** @type {number} */ startListeningCalls: 0,
 
-	/** @type {number} */
-	startListeningCalls: 0,
+	wsTrySend: (type: string, msg: any) => {
+		if (Hackify != null)
+			if (Hackify.ws.readyState != WebSocket.OPEN)
+				Hackify.ws.send(`{"type": "${type}", "message": "${msg}"}`);
+			else console.error("Hey the socket is closed");
+	},
 
 	startListening: () => {
-		console.info(
-			"Start Listening Call: ",
-			++SpotifyHackApi.startListeningCalls,
-		);
+		console.info("Start Listening Call: ", ++Hackify.startListeningCalls);
 		let socketOpen = false;
 
-		if (SpotifyHackApi.ws != null) {
-			if (SpotifyHackApi.ws.readyState === WebSocket.OPEN) return true;
+		if (Hackify.ws != null) {
+			if (Hackify.ws.readyState === WebSocket.OPEN) return true;
 			else {
-				delete SpotifyHackApi.ws;
-				SpotifyHackApi.ws = null;
+				delete Hackify.ws;
+				Hackify.ws = null;
 			}
 		}
 
 		try {
-			SpotifyHackApi.ws = new WebSocket("ws://localhost:8080/ws");
+			Hackify.ws = new WebSocket("ws://localhost:8080/ws");
 		} catch (e) {
 			return false;
 		}
 
-		if (SpotifyHackApi.ws != null)
-			if (SpotifyHackApi.ws.readyState === WebSocket.OPEN)
-				clearInterval(SpotifyHackApi.interval);
+		if (Hackify.ws != null)
+			if (Hackify.ws.readyState === WebSocket.OPEN)
+				clearInterval(Hackify.interval);
 
-		SpotifyHackApi.ws.addEventListener("open", (event: Event) => {
-			if (SpotifyHackApi.interval != null) {
-				clearInterval(SpotifyHackApi.interval);
-				SpotifyHackApi.interval = null;
+		Hackify.ws.addEventListener("open", (event: Event) => {
+			if (Hackify.interval != null) {
+				clearInterval(Hackify.interval);
+				Hackify.interval = null;
 			}
 			socketOpen = true;
 			console.info("Hello Server!", event);
-			SpotifyHackApi.ws.send(
-				`{"type": "info", "message": "hello server!"}`,
-			);
+			Hackify.ws.send(`{"type": "info", "message": "hello server!"}`);
 		});
 
-		SpotifyHackApi.ws.addEventListener("close", (event: CloseEvent) => {
+		Hackify.ws.addEventListener("close", (event: CloseEvent) => {
 			socketOpen = false;
 			console.warn("Bye Server!", event);
-			if (SpotifyHackApi.interval === null)
-				SpotifyHackApi.interval = setInterval(() => {
-					SpotifyHackApi.startListening();
-					if (SpotifyHackApi.ws != null)
-						if (SpotifyHackApi.ws.readyState === WebSocket.OPEN)
-							clearInterval(SpotifyHackApi.interval);
+			if (Hackify.interval === null)
+				Hackify.interval = setInterval(() => {
+					Hackify.startListening();
+					if (Hackify.ws != null)
+						if (Hackify.ws.readyState === WebSocket.OPEN)
+							clearInterval(Hackify.interval);
 				}, 2500);
 		});
 
-		SpotifyHackApi.ws.addEventListener("error", (event: ErrorEvent) => {
+		Hackify.ws.addEventListener("error", (event: ErrorEvent) => {
 			console.error("Error with server", event);
 			if (socketOpen)
-				SpotifyHackApi.ws.send(
+				Hackify.ws.send(
 					`{"type": "error", "message": "problem with WebSocket client"}`,
 				);
 			else console.error("Hey the socket is closed");
 		});
 
-		SpotifyHackApi.ws.addEventListener("message", (event: MessageEvent) => {
+		Hackify.ws.addEventListener("message", (event: MessageEvent) => {
 			console.info("Message from server ", event.data);
 			let parsedData: { type: string; message: string };
 			try {
 				parsedData = JSON.parse(event.data);
-			} catch (error) {
-				if (socketOpen)
-					SpotifyHackApi.ws.send(
-						`{"type": "error", "message": "failed to parse server's data"}`,
+				if (!parsedData.type)
+					throw SyntaxError(
+						`No or blank tyoe in format '{"type": "info|error|command|code", "message": ""}'`,
 					);
-				else console.error("Hey the socket is closed");
-				console.error("Failed To parse server's message");
+				if (!parsedData.message)
+					throw SyntaxError(
+						`No or blank message in format '{"type": "info|error|command|code", "message": ""}'`,
+					);
+			} catch (err: SyntaxError | any) {
+				Hackify.ws.send(
+					`{"type": "error", "message": "${err.toString()}"}`,
+				);
+				console.error(`Error Parsing '${err.toString()}'`);
 				return;
 			}
 			if (parsedData.type === "code") {
-				if (socketOpen)
-					SpotifyHackApi.ws.send(
-						`{"type": "code", "message": "${SpotifyHackApi.runCode(
-							parsedData.message,
-						)}"}`,
-					);
-				else console.error("Hey the socket is closed");
+				Hackify.wsTrySend("code", eval(parsedData.message));
 			} else if (parsedData.type === "command") {
+				// prettier-ignore
 				switch (parsedData.message) {
-					case "getIsCurrentLiked": {
-						if (socketOpen)
-							SpotifyHackApi.ws.send(
-								`{"type": "getIsCurrentLiked", "message": "${SpotifyHackApi.getIsCurrentLiked()}"}`,
-							);
-						else console.error("Hey the socket is closed");
-						break;
-					}
-					case "getRepeatStatus": {
-						if (socketOpen)
-							SpotifyHackApi.ws.send(
-								`{"type": "getRepeatStatus", "message": "${SpotifyHackApi.getRepeatStatus()}"}`,
-							);
-						else console.error("Hey the socket is closed");
-						break;
-					}
-					case "getPlayState": {
-						if (socketOpen)
-							SpotifyHackApi.ws.send(
-								`{"type": "getPlayState", "message": "${SpotifyHackApi.getPlayState()}"}`,
-							);
-						else console.error("Hey the socket is closed");
-						break;
-					}
-					case "dislikeCurrent": {
-						SpotifyHackApi.dislikeCurrent();
-						break;
-					}
-					case "enableRepeat": {
-						SpotifyHackApi.enableRepeat();
-						break;
-					}
-					case "enableRepeatOne": {
-						SpotifyHackApi.enableRepeatOne();
-						break;
-					}
-					case "likeCurrent": {
-						SpotifyHackApi.likeCurrent();
-						break;
-					}
-					case "next": {
-						SpotifyHackApi.next();
-						break;
-					}
-					case "pause": {
-						SpotifyHackApi.pause();
-						break;
-					}
-					case "play": {
-						SpotifyHackApi.play();
-						break;
-					}
-					case "playPause": {
-						SpotifyHackApi.playPause();
-						break;
-					}
-					case "previous": {
-						SpotifyHackApi.previous();
-						break;
-					}
-					case "toggleLikeCurrent": {
-						SpotifyHackApi.toggleLikeCurrent();
-						break;
-					}
-					case "toggleShuffle": {
-						SpotifyHackApi.toggleShuffle();
-						break;
-					}
+
+					case "play":              Hackify.play()                                                      ; break ;
+					case "pause":             Hackify.pause()                                                     ; break ;
+					case "playPause":         Hackify.playPause()                                                 ; break ;
+					case "next":              Hackify.next()                                                      ; break ;
+					case "previous":          Hackify.previous()                                                  ; break ;
+
+					case "toggleLike":        Hackify.toggleLike()                                                ; break ;
+					case "likeCurrent":       Hackify.likeCurrent()                                               ; break ;
+					case "dislikeCurrent":    Hackify.dislikeCurrent()                                            ; break ;
+
+					case "enableRepeat":      Hackify.enableRepeat()                                              ; break ;
+					case "enableRepeatOne":   Hackify.enableRepeatOne()                                           ; break ;
+					case "disableRepeat":     Hackify.disableRepeat()                                             ; break ;
+
+					case "toggleShuffle":     Hackify.toggleShuffle()                                             ; break ;
+
+					case "getInfo":           Hackify.wsTrySend("getInfo",           Hackify.getInfo())           ; break ;
+					case "getCurrentSong":    Hackify.wsTrySend("getCurrentSong",    Hackify.getCurrentSong())    ; break ;
+					case "getIsCurrentLiked": Hackify.wsTrySend("getIsCurrentLiked", Hackify.getIsCurrentLiked()) ; break ;
+					case "getIsPlaying":      Hackify.wsTrySend("getIsPlaying",      Hackify.getIsPlaying())      ; break ;
+					case "getRepeatStatus":   Hackify.wsTrySend("getRepeatStatus",   Hackify.getRepeatStatus())   ; break ;
+
 					default: {
-						if (socketOpen)
-							SpotifyHackApi.ws.send(
-								`{"type": "error", "message": "unknown command"}`,
-							);
-						else console.error("Hey the socket is closed");
-						console.error("Unknown Command: ", event.data);
+						Hackify.wsTrySend("error", `unknown command${parsedData.message}`);
+						console.error("Unknown Command: ", event.data); 
 						break;
 					}
+
 				}
 			}
 		});
 
-		return SpotifyHackApi.ws.readyState === WebSocket.OPEN;
+		return Hackify.ws.readyState === WebSocket.OPEN;
 	},
 };
-SpotifyHackApi.startListening();
+
+Hackify.startListening();

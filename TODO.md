@@ -1,5 +1,6 @@
 # Todo
 	- Get album art
+	- Fix Repeat art
 	- Make Player Data
 	- Make python bindngs
 	- Return Values
