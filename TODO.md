@@ -1,4 +1,5 @@
 # Todo
+	- GUI  with full control of server
 	- Get album art
 	- Fix Repeat art
 	- Make Player Data

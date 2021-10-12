@@ -1,0 +1,19 @@
+[
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/Debug",
+  "command": "/usr/bin/clang++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/Debug/gui_autogen/include -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/include -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -isystem /usr/lib/qt/mkspecs/linux-g++ -std=c++20 -fuse-ld=lld -Wno-unused-command-line-argument -pthread -include /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/Debug/cotire/gui_CXX_prefix.hxx -fPIC -o CMakeFiles/gui.dir/gui_autogen/mocs_compilation.cpp.o -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/Debug/gui_autogen/mocs_compilation.cpp",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/Debug/gui_autogen/mocs_compilation.cpp"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/Debug",
+  "command": "/usr/bin/clang++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/Debug/gui_autogen/include -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/include -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -isystem /usr/lib/qt/mkspecs/linux-g++ -std=c++20 -fuse-ld=lld -Wno-unused-command-line-argument -pthread -include /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/Debug/cotire/gui_CXX_prefix.hxx -fPIC -o CMakeFiles/gui.dir/src/main.cpp.o -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/src/main.cpp",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/src/main.cpp"
+},
+
+{
+  "directory": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/Debug",
+  "command": "/usr/bin/clang++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/Debug/gui_autogen/include -I/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/include -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -isystem /usr/lib/qt/mkspecs/linux-g++ -std=c++20 -fuse-ld=lld -Wno-unused-command-line-argument -pthread -include /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/Debug/cotire/gui_CXX_prefix.hxx -fPIC -o CMakeFiles/gui.dir/src/mainwindow.cpp.o -c /home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/src/mainwindow.cpp",
+  "file": "/home/shawn/dev/cpp/CLIProjeccts/SpotifyHack/gui/src/mainwindow.cpp"
+}
+]

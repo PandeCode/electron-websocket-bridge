@@ -4,6 +4,11 @@ tags
 tags.lock
 tags.temp
 
+gui/Debug
+gui/Release
+gui/.cache
+gui/.gdb_history
+
 server/Debug
 server/Release
 server/.cache
