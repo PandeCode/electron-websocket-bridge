@@ -1,3 +1,4 @@
+// @ts-nocheck
 declare namespace Spicetify {
     type Metadata = Partial<Record<string, string>>;
     type ContextTrack = {

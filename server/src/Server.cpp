@@ -2,8 +2,14 @@
 
 #include "Log.hpp"
 
+#include <array>
+#include <thread>
 
 enum class WaitMessage : std::uint8_t {
+	getInfo,
+	getCurrentSongArtist,
+	getCurrentSongAlbumArt,
+	getCurrentSong,
 	code,
 	getIsCurrentLiked,
 	getIsPlaying,
@@ -19,27 +25,30 @@ static WaitMessage stringToWaitMessage(const std::string& str) {
 		return WaitMessage::getIsPlaying;
 	else if(str == "getRepeatStatus")
 		return WaitMessage::getRepeatStatus;
+	else if(str == "getInfo")
+		return WaitMessage::getInfo;
+	else if(str == "getCurrentSongArtist")
+		return WaitMessage::getCurrentSongArtist;
+	else if(str == "getCurrentSongAlbumArt")
+		return WaitMessage::getCurrentSongAlbumArt;
+	else if(str == "getCurrentSong")
+		return WaitMessage::getCurrentSong;
 	else
 		throw std::runtime_error("Invalid WaitMessage");
 }
 
-static const char* waitMessageToString(const WaitMessage& waitMessage) {
+static const char* waitMessageToString(const WaitMessage& waitMessage) noexcept {
 	switch(waitMessage) {
 		case WaitMessage::code: return "code";
 		case WaitMessage::getIsCurrentLiked: return "getIsCurrentLiked";
 		case WaitMessage::getIsPlaying: return "getIsPlaying";
 		case WaitMessage::getRepeatStatus: return "getRepeatStatus";
+		case WaitMessage::getInfo: return "getInfo";
+		case WaitMessage::getCurrentSongArtist: return "getCurrentSongArtist";
+		case WaitMessage::getCurrentSongAlbumArt: return "getCurrentSongAlbumArt";
+		case WaitMessage::getCurrentSong: return "getCurrentSong";
 	}
 }
-
-//static std::string waitMessageToString(const WaitMessage& waitMessage) {
-//switch(waitMessage) {
-//case WaitMessage::code: return "code";
-//case WaitMessage::getIsCurrentLiked: return "getIsCurrentLiked";
-//case WaitMessage::getIsPlaying: return "getIsPlaying";
-//case WaitMessage::getRepeatStatus: return "getRepeatStatus";
-//}
-//}
 
 static char getch() {
 	char buf = 0;
@@ -78,14 +87,12 @@ void Server::startServer() {
 	Log::Debug("Server Shutdown");
 }
 
-void Server::sendToAllClients(const char* text) {
-	for(const auto& client: m_clients)
-		client->send_text(text);
-}
-
-void Server::sendToPlayerClient(const char* text) {
-	(*playerClient).send_text(text);
-}
+// clang-format off
+void Server::sendToAllClients(const std::string& text)   { for(const auto& client: m_clients) client->send_text(text); }
+void Server::sendToAllClients(const char* text)          { for(const auto& client: m_clients) client->send_text(text); }
+void Server::sendToPlayerClient(const std::string& text) { (*playerClient).send_text(text); }
+void Server::sendToPlayerClient(const char* text)        { (*playerClient).send_text(text); }
+// clang-format on
 
 void Server::killServer() {
 	Log::Debug("Requested Server Shutdown");
@@ -187,13 +194,11 @@ void Server::enableAllEndpoints() {
 }
 
 void Server::checkGiveClient(const WaitMessage dataType, const std::string& data) {
-	Log::Debug("Key ");
+	Log::Debug("Check Give Client Call");
 	for(auto& [key, value]: waitingList) {
 		if(value == dataType) {
-			if(std::holds_alternative<crow::response*>(key)) //response
-			{
-
-				Log::Info("Yes");
+			if(std::holds_alternative<crow::response*>(key)) { // response
+				Log::Debug("Check Give Client Call For RESPONSE pointer");
 				Log::Info(
 				    "Rest Client [",
 				    std::get<1>(key),
@@ -202,6 +207,7 @@ void Server::checkGiveClient(const WaitMessage dataType, const std::string& data
 				    "':'",
 				    data,
 				    "' ");
+
 				std::get<0>(key)->body = data;
 				Log::Debug("Set Body");
 				waitingList.erase(key);
@@ -210,8 +216,9 @@ void Server::checkGiveClient(const WaitMessage dataType, const std::string& data
 				Log::Debug("Http Unlocked");
 
 			} else if(std::holds_alternative<crow::websocket::connection*>(
-				      key)) //websocket
-			{
+				      key)) { // websocket
+				Log::Debug("Check Give Client Call For "
+					   "WEBSOCKET_CONNECTION pointer");
 				std::get<1>(key)->send_text(
 				    std::string(R"({"type": ")") +
 				    waitMessageToString(dataType) + R"(", "message": ")" +
@@ -226,7 +233,7 @@ void Server::checkGiveClient(const WaitMessage dataType, const std::string& data
 				    "':'",
 				    data,
 				    "' ");
-			}else{
+			} else {
 				Log::Error("Neither");
 			}
 			break;
@@ -241,16 +248,7 @@ void Server::enablePlayerClientWebsocket() {
 	CROW_ROUTE(m_app, "/ws")
 	    .websocket()
 	    .onaccept([&](const crow::request& req) {
-		    Info(
-			"Accecpt: ",
-			" :: ",
-			req.body,
-			" :: ",
-			req.url,
-			" :: ",
-			req.raw_url,
-			" :: ",
-			req.remote_ip_address);
+		    Info("Accecpt: from ", req.raw_url, " :: ", req.remote_ip_address);
 
 		    if(playerClient != nullptr) {
 			    Info("Imposter client blocked, already connected.");
@@ -286,44 +284,32 @@ void Server::enablePlayerClientWebsocket() {
 		    else {
 
 			    crow::json::rvalue parsedData;
+			    string             type;
+			    string             message;
+
 			    try {
 				    parsedData = crow::json::load(data);
+				    type       = std::string(parsedData["type"]);
+				    message    = std::string(parsedData["message"]);
 			    } catch(std::runtime_error err) {
 				    conn.send_text(
-					std::string(R"({type: error, "message": ")") +
+					std::string(R"({"type": "error", "message": ")") +
 					err.what() + "\"}");
+				    return;
 			    }
 
-			    string type(parsedData["type"]);
-			    string message(parsedData["message"]);
-
-			    if(type == "code") {
+			    if(type == "code" || std::find(
+						     getVaildCommands.begin(),
+						     getVaildCommands.end(),
+						     type) != getVaildCommands.end()) {
 				    Info("Got code response '", message, "'");
-				    checkGiveClient(WaitMessage::code, message);
-			    } else if(type == "getRepeatStatus") {
-				    Info("Repeat Status '", message, "'");
-				    checkGiveClient(
-					WaitMessage::getRepeatStatus,
-					message);
-			    } else if(type == "getIsCurrentLiked") {
-				    Info("Is Current Liked '", message, "'");
-				    checkGiveClient(
-					WaitMessage::getIsCurrentLiked,
-					message);
-			    } else if(type == "getIsPlaying") {
-				    Info("Is Playing '", message, "'");
-				    checkGiveClient(WaitMessage::getIsPlaying, message);
+				    checkGiveClient(stringToWaitMessage(type), message);
 			    } else if(type == "info") {
 				    Info("Info From Player Client '", message, "'");
 			    } else if(type == "error") {
 				    Error("Error from Player Client '", message, "'");
 			    } else {
-				    Error(
-					"Unknown type '",
-					type,
-					"' with '",
-					message,
-					"'");
+				    Error("Unknown type '", type, "'");
 			    }
 		    }
 	    });
@@ -376,36 +362,41 @@ void Server::enableClientWebsocket() {
 				    message    = std::string(parsedData["message"]);
 			    } catch(std::runtime_error err) {
 				    conn.send_text(
-					std::string(R"({type: error, "message": ")") +
+					std::string(R"({type: "error", "message": ")") +
 					err.what() + "\"}");
+				    return;
 			    }
 
 			    if(type == "code") {
 
 				    waitingList[&conn] = WaitMessage::code;
 
-				    (*playerClient)
-					.send_text(
-					    R"({"type": "code", "message": ")" + message +
-					    "\"}");
+				    sendToPlayerClient(
+					R"({"type": "code", "message": ")" + message +
+					"\"}");
 
 			    } else if(type == "command") {
 				    if(message != "") {
 
-					    if(message == "getRepeatStatus") {
-
+					    if(std::find(
+						   getVaildCommands.begin(),
+						   getVaildCommands.end(),
+						   message) != getVaildCommands.end())
 						    waitingList[&conn] =
-							WaitMessage::getRepeatStatus;
-
-					    } else if(message == "getIsCurrentLiked") {
-
-						    waitingList[&conn] =
-							WaitMessage::getIsCurrentLiked;
-
-					    } else if(message == "getIsPlaying") {
-
-						    waitingList[&conn] =
-							WaitMessage::getIsPlaying;
+							stringToWaitMessage(message);
+					    else if(
+						std::find(
+						    validCommands.begin(),
+						    validCommands.end(),
+						    message) == validCommands.end()) {
+						    conn.send_text(
+							R"({"type": "error", "message": "unknown command ')" +
+							message + R"(' "})");
+						    Log::Error(
+							"Unknown Command '",
+							message,
+							"'");
+						    return;
 					    }
 
 					    (*playerClient).send_text(data);
@@ -437,6 +428,7 @@ void Server::enableHttpClient() {
 	    crow::HTTPMethod::POST)([&](const crow::request& req, crow::response& res) {
 		if(playerClient == nullptr) {
 			res.code = 500;
+			res.end();
 			return R"({"type": "error", "message": "client not connected"})";
 		}
 
@@ -449,7 +441,7 @@ void Server::enableHttpClient() {
 		} catch(std::runtime_error err) {
 			res.body = std::string(R"({"type": "error", "message": ")") +
 				   err.what() + "\"}";
-			res.code = 400;
+			res.code = 500;
 			res.end();
 			return res.body.c_str();
 		}
@@ -473,7 +465,8 @@ void Server::enableHttpClient() {
 
 		while(httpLocked) {
 			Log::Info("Locked Command");
-			sleep(1);
+			using namespace std::chrono_literals;
+			std::this_thread::sleep_for(500ms);
 		}
 		Log::Info(
 		    "Rest Received callback command to player '",
@@ -571,37 +564,138 @@ void Server::enableHtmlClient() {
 	});
 }
 
-constexpr const char* const Server::s_socketHelp = R"(HttpHelp
+constexpr const char* const Server::s_socketHelp    = R"(WebSocket Help:
+Normal client websocket url
+/client/ws
+
+wscat -c "ws://localhost:8080/client/ws"
+
 {"type": "", "message": ""}
 type: info | command | code
-Examples
-{"type": "command", "message": "playPause"}
+
+info:
+	Anything
+{"type": "info", "message": "hello world this can be anything"}
+
+code:
+	Valid browser JS code
+{"type": "code", "message": "document.querySelector('html').style.display = 'none'"}
+{"type": "code", "message": "location.href=location.href"}
+
+command:
+    getRepeatStatus | getIsCurrentLiked | getIsPlaying | getInfo | getCurrentSong | getCurrentSongAlbumArt | getCurrentSongArtist | play | pause | playPause | next | previous | toggleLike | likeCurrent | dislikeCurrent | enableRepeat | enableRepeatOne | disableRepeat | toggleShuffle
+
+{"type": "command", "message": "getInfo"}
+
+{"type": "command", "message": "getRepeatStatus"}
+{"type": "command", "message": "getIsCurrentLiked"}
+{"type": "command", "message": "getIsPlaying"}
+
+{"type": "command", "message": "getCurrentSong"}
+{"type": "command", "message": "getCurrentSongAlbumArt"}
+{"type": "command", "message": "getCurrentSongArtist"}
+
 {"type": "command", "message": "play"}
 {"type": "command", "message": "pause"}
+{"type": "command", "message": "playPause"}
 {"type": "command", "message": "next"}
+{"type": "command", "message": "previous"}
+
+{"type": "command", "message": "toggleLike"}
+{"type": "command", "message": "likeCurrent"}
+{"type": "command", "message": "dislikeCurrent"}
+
+{"type": "command", "message": "enableRepeat"}
+{"type": "command", "message": "enableRepeatOne"}
+{"type": "command", "message": "disableRepeat"}
+
+{"type": "command", "message": "toggleShuffle"}
 )";
 
-constexpr const char* const Server::s_httpHelp   = R"(Socket Help:
+constexpr const char* const Server::s_httpHelp      = R"(Http Help:
+Player client websocket url
 /ws
-/client
+
+Normal client websocket url (see websocket help)
 /client/ws
-/command/disableRepeatOne
-/command/dislikeCurrent
-"command/enableRepeat
-/command/enableRepeatOne
-/command/likeCurrent
-/command/next
-/command/pause
-/command/play
-/command/playPause
-/command/previous
-/command/toggleLikeCurrent
-/command/toggleShuffle
 
-/command/getInfo
+HTML Sandbox to test everything (source is not compressed so you can inspect it)
+/client
 
-[POST] /code
-Examples
+[POST] /code (pending repair don't use)
 	curl -# -X POST -d '{"command": "location.href=location.href"}' 'http://localhost:8080/code'
 	curl -#vikLd '{"command": "location.href=location.href"}' -H "Content-Type: application/json" "http://localhost:8080/code"
+
+
+/command/getRepeatStatus              (pending repair don't use)
+/command/getIsCurrentLiked            (pending repair don't use)
+/command/getIsPlaying                 (pending repair don't use)
+/command/getInfo                      (pending repair don't use)
+/command/getCurrentSong               (pending repair don't use)
+/command/getCurrentSongAlbumArt       (pending repair don't use)
+/command/getCurrentSongArtist         (pending repair don't use)
+
+/command/play
+/command/pause
+/command/playPause
+/command/next
+/command/previous
+
+/command/toggleLike
+/command/likeCurrent
+/command/dislikeCurrent
+
+/command/enableRepeat
+/command/enableRepeatOne
+/command/disableRepeat
+
+/command/toggleShuffle
+
+Examples
+	curl "http://localhost:8080/command/getRepeatStatus"              (pending repair don't use)
+	curl "http://localhost:8080/command/getIsCurrentLiked"            (pending repair don't use)
+	curl "http://localhost:8080/command/getIsPlaying"                 (pending repair don't use)
+	curl "http://localhost:8080/command/getInfo"                      (pending repair don't use)
+	curl "http://localhost:8080/command/getCurrentSong"               (pending repair don't use)
+	curl "http://localhost:8080/command/getCurrentSongAlbumArt"       (pending repair don't use)
+	curl "http://localhost:8080/command/getCurrentSongArtist"         (pending repair don't use)
+
+	curl "http://localhost:8080/command/play"
+	curl "http://localhost:8080/command/pause"
+	curl "http://localhost:8080/command/playPause"
+	curl "http://localhost:8080/command/next"
+	curl "http://localhost:8080/command/previous"
+
+	curl "http://localhost:8080/command/toggleLike"
+	curl "http://localhost:8080/command/likeCurrent"
+	curl "http://localhost:8080/command/dislikeCurrent"
+
+	curl "http://localhost:8080/command/enableRepeat"
+	curl "http://localhost:8080/command/enableRepeatOne"
+	curl "http://localhost:8080/command/disableRepeat"
+
+	curl "http://localhost:8080/command/toggleShuffle"
 )";
+
+constexpr const std::array Server::getVaildCommands = {
+    "getRepeatStatus",
+    "getIsCurrentLiked",
+    "getIsPlaying",
+    "getInfo",
+    "getCurrentSong",
+    "getCurrentSongAlbumArt",
+    "getCurrentSongArtist"};
+
+constexpr const std::array Server::validCommands = {
+    "play",
+    "pause",
+    "playPause",
+    "next",
+    "previous",
+    "toggleLike",
+    "likeCurrent",
+    "dislikeCurrent",
+    "enableRepeat",
+    "enableRepeatOne",
+    "disableRepeat",
+    "toggleShuffle"};
