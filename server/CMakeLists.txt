@@ -60,6 +60,6 @@ target_precompile_headers(
 )
 
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules")
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
 include(cotire)
 cotire(${PROJECT_NAME})
