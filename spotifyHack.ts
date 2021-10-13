@@ -54,10 +54,10 @@ const Hackify = {
 	interval: null,
 	startListeningCalls: 0,
 
-	wsTrySend: (type: string, msg: any) => {
+	wsTrySend: (type: string, message: any) => {
 		if (Hackify.ws != null)
 			if (Hackify.ws.readyState == WebSocket.OPEN)
-				Hackify.ws.send(`{"type": "${type}", "message": "${msg}"}`);
+				Hackify.ws.send(JSON.stringify({ type, message }));
 			else console.error("Hey the socket is closed");
 		else console.error("Hey the socket is not defined");
 	},
@@ -157,7 +157,7 @@ const Hackify = {
 
 					case "toggleShuffle":        Hackify.toggleShuffle()                                             ; break ;
 
-					case "getInfo":              Hackify.wsTrySend("getInfo",              Hackify.getInfo())              ; break ;
+					case "getInfo":              Hackify.wsTrySend("getInfo",              JSON.stringify(Hackify.getInfo()))              ; break ;
 					case "getCurrentSong":       Hackify.wsTrySend("getCurrentSong",       Hackify.getCurrentSong())       ; break ;
 					case "getCurrentSongArtist": Hackify.wsTrySend("getCurrentSongArtist", Hackify.getCurrentSongArtist()) ; break ;
 					case "getIsCurrentLiked":    Hackify.wsTrySend("getIsCurrentLiked",    Hackify.getIsCurrentLiked())    ; break ;

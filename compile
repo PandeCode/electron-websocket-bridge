@@ -2,12 +2,12 @@
 
 compileOpen() {
 	echo Compiling openSpotifyHack
-	tsc -v ./openSpotifyHack.ts --outDir ~/dev/extensions/browser/MyExtension/dist/
+	tsc --pretty ./openSpotifyHack.ts --outDir ~/dev/extensions/browser/MyExtension/dist/
 }
 
 compileClient() {
 	echo Compiling SpotifyHack
-	tsc -v ./spotifyHack.ts --outDir ~/.config/spicetify/Extensions/ &&
+	tsc --pretty ./spotifyHack.ts --outDir ~/.config/spicetify/Extensions/ &&
 		spicetify apply &&
 		pkill spotify
 }
