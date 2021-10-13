@@ -1,20 +1,26 @@
 #!/bin/env sh
 
-case "$1" in
-	"open" | "openSpotifyHack.ts")
-		echo Compiling openSpotifyHack
-		tsc ./openSpotifyHack.ts --outDir ~/dev/extensions/browser/MyExtension/dist/
-		;;
+compileOpen() {
+	echo Compiling openSpotifyHack
+	tsc -v ./openSpotifyHack.ts --outDir ~/dev/extensions/browser/MyExtension/dist/
+}
 
-	"spotify" | "spotifyHack.ts")
-		echo SpotifyHack
-		tsc ./spotifyHack.ts --outDir ~/.config/spicetify/Extensions/
-		;;
+compileClient() {
+	echo Compiling SpotifyHack
+	tsc -v ./spotifyHack.ts --outDir ~/.config/spicetify/Extensions/ &&
+		spicetify apply &&
+		pkill spotify
+}
+
+case "$1" in
+	"open" | "openSpotifyHack.ts") compileOpen ;;
+
+	"spotify" | "spotifyHack.ts") compileClient ;;
 
 	*)
 		echo Compiling Both
-		tsc ./openSpotifyHack.ts --outDir ~/dev/extensions/browser/MyExtension/dist/
-		tsc ./spotifyHack.ts --outDir ~/.config/spicetify/Extensions/
+		compileOpen
+		compileClient
 		;;
 
 esac

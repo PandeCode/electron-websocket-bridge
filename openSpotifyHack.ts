@@ -121,10 +121,11 @@ const Hackify = {
 	/** @type {number} */ startListeningCalls: 0,
 
 	wsTrySend: (type: string, message: any) => {
-		if (Hackify != null)
+		if (Hackify.ws != null)
 			if (Hackify.ws.readyState == WebSocket.OPEN)
-				Hackify.ws.send(JSON.stringify({type, message}));
+				Hackify.ws.send(JSON.stringify({ type, message }));
 			else console.error("Hey the socket is closed");
+		else console.error("Hey the socket is not defined");
 	},
 
 	startListening: () => {

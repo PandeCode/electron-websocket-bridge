@@ -11,9 +11,8 @@ const Hackify = {
 		document.querySelector<HTMLElement>(selector),
 
 	_likeBtn: ".main-addButton-button",
-	_currentSong: "",
-	_currentSongArtist: "",
-	_currentSongAlbumArt: "",
+	_currentSong: "#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div.main-nowPlayingBar-left > div > div.main-trackInfo-container.ellipsis-one-line > div.main-trackInfo-name.ellipsis-one-line.main-type-mesto > span > a",
+	_currentSongArtist: "#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div.main-nowPlayingBar-left > div > div.main-trackInfo-container.ellipsis-one-line > div.main-trackInfo-artists.ellipsis-one-line.main-type-finale > span > span > a",
 
 	getInfo: () => ({
 		currentSong: Hackify.getCurrentSong(),
@@ -26,7 +25,7 @@ const Hackify = {
 
 	getCurrentSongArtist: () => Hackify._getInnerText(Hackify._currentSongArtist),
 	getCurrentSong: () => Hackify._getInnerText(Hackify._currentSong),
-	getCurrentSongAlbumArt: () => document.querySelector<HTMLImageElement>(Hackify._currentSongAlbumArt) .src,
+	getCurrentSongAlbumArt: () => "Unavalible in this client",
 
 	getIsShuffleOn: () => Spicetify.Player.getShuffle(),
 	toggleShuffle: () => Spicetify.Player.toggleShuffle(),
@@ -56,10 +55,11 @@ const Hackify = {
 	startListeningCalls: 0,
 
 	wsTrySend: (type: string, msg: any) => {
-		if (Hackify != null)
-			if (Hackify.ws.readyState != WebSocket.OPEN)
+		if (Hackify.ws != null)
+			if (Hackify.ws.readyState == WebSocket.OPEN)
 				Hackify.ws.send(`{"type": "${type}", "message": "${msg}"}`);
 			else console.error("Hey the socket is closed");
+		else console.error("Hey the socket is not defined");
 	},
 
 	startListening: () => {
