@@ -2,7 +2,7 @@ const Hackify = {
 	_likeBtn:
 		"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > button",
 	_currentSongAlbumArt:
-		"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div > div > a > div > div > div > img",
+		"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div > div > div > a > div > div > div > img",
 	_currentSong:
 		"#main > div > div.Root__top-container > div.Root__now-playing-bar > footer > div > div > div > div > div.standalone-ellipsis-one-line > span > a",
 	_currentSongArtist:
@@ -207,29 +207,29 @@ const Hackify = {
 				// prettier-ignore
 				switch (parsedData.message) {
 
-					case "play":              Hackify.play()                                                                           ; break ;
-					case "pause":             Hackify.pause()                                                                          ; break ;
-					case "playPause":         Hackify.playPause()                                                                      ; break ;
-					case "next":              Hackify.next()                                                                           ; break ;
-					case "previous":          Hackify.previous()                                                                       ; break ;
+					case "play"                   : Hackify.play()                                                                  ; break ;
+					case "pause"                  : Hackify.pause()                                                                 ; break ;
+					case "playPause"              : Hackify.playPause()                                                             ; break ;
+					case "next"                   : Hackify.next()                                                                  ; break ;
+					case "previous"               : Hackify.previous()                                                              ; break ;
 
-					case "toggleLike":        Hackify.toggleLike()                                                                     ; break ;
-					case "likeCurrent":       Hackify.likeCurrent()                                                                    ; break ;
-					case "dislikeCurrent":    Hackify.dislikeCurrent()                                                                 ; break ;
+					case "toggleLike"             : Hackify.toggleLike()                                                            ; break ;
+					case "likeCurrent"            : Hackify.likeCurrent()                                                           ; break ;
+					case "dislikeCurrent"         : Hackify.dislikeCurrent()                                                        ; break ;
 
-					case "enableRepeat":      Hackify.enableRepeat()                                                                   ; break ;
-					case "enableRepeatOne":   Hackify.enableRepeatOne()                                                                ; break ;
-					case "disableRepeat":     Hackify.disableRepeat()                                                                  ; break ;
+					case "enableRepeat"           : Hackify.enableRepeat()                                                          ; break ;
+					case "enableRepeatOne"        : Hackify.enableRepeatOne()                                                       ; break ;
+					case "disableRepeat"          : Hackify.disableRepeat()                                                         ; break ;
 
-					case "toggleShuffle":     Hackify.toggleShuffle()                                                                  ; break ;
+					case "toggleShuffle"          : Hackify.toggleShuffle()                                                         ; break ;
 
-					case "getInfo":                Hackify.wsTrySend("getInfo",                Hackify.getInfo())                      ; break ;
-					case "getCurrentSong":         Hackify.wsTrySend("getCurrentSong",         Hackify.getCurrentSong())               ; break ;
-					case "getCurrentSongAlbumArt": Hackify.wsTrySend("getCurrentSongAlbumArt", Hackify.getCurrentSongAlbumArt())       ; break ;
-					case "getCurrentSongArtist":   Hackify.wsTrySend("getCurrentSongArtist",   Hackify.getCurrentSongArtist())         ; break ;
-					case "getIsCurrentLiked":      Hackify.wsTrySend("getIsCurrentLiked",      Hackify.getIsCurrentLiked())            ; break ;
-					case "getIsPlaying":           Hackify.wsTrySend("getIsPlaying",           Hackify.getIsPlaying())                 ; break ;
-					case "getRepeatStatus":        Hackify.wsTrySend("getRepeatStatus",        Hackify.getRepeatStatus())              ; break ;
+					case "getInfo"                : Hackify.wsTrySend("getInfo"                , JSON.stringify(Hackify.getInfo())) ; break ;
+					case "getCurrentSong"         : Hackify.wsTrySend("getCurrentSong"         , Hackify.getCurrentSong())          ; break ;
+					case "getCurrentSongAlbumArt" : Hackify.wsTrySend("getCurrentSongAlbumArt" , Hackify.getCurrentSongAlbumArt())  ; break ;
+					case "getCurrentSongArtist"   : Hackify.wsTrySend("getCurrentSongArtist"   , Hackify.getCurrentSongArtist())    ; break ;
+					case "getIsCurrentLiked"      : Hackify.wsTrySend("getIsCurrentLiked"      , Hackify.getIsCurrentLiked())       ; break ;
+					case "getIsPlaying"           : Hackify.wsTrySend("getIsPlaying"           , Hackify.getIsPlaying())            ; break ;
+					case "getRepeatStatus"        : Hackify.wsTrySend("getRepeatStatus"        , Hackify.getRepeatStatus())         ; break ;
 
 					default: {
 						Hackify.wsTrySend("error", `unknown command${parsedData.message}`);
