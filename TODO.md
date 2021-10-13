@@ -1,4 +1,6 @@
 # Todo
+	- Check EnabelRepeat and EnabelRepeatOne
+	- Test All  Commands
 	- GUI  with full control of server
 	- Get album art
 	- Fix Repeat art
