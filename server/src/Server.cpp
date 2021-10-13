@@ -37,7 +37,7 @@ static WaitMessage stringToWaitMessage(const std::string& str) {
 		throw std::runtime_error("Invalid WaitMessage");
 }
 
-static const char* waitMessageToString(const WaitMessage& waitMessage) noexcept {
+static std::string waitMessageToString(const WaitMessage& waitMessage) noexcept {
 	switch(waitMessage) {
 		case WaitMessage::code: return "code";
 		case WaitMessage::getIsCurrentLiked: return "getIsCurrentLiked";
@@ -198,16 +198,17 @@ void Server::checkGiveClient(const WaitMessage dataType, const std::string& data
 	for(auto& [key, value]: waitingList) {
 		if(value == dataType) {
 			if(std::holds_alternative<crow::response*>(key)) { // response
-				Log::Debug("Check Give Client Call For RESPONSE pointer");
+				Log::Debug("Check Give Client Call For RESPONSE");
 				Log::Info(
 				    "Rest Client [",
-				    std::get<1>(key),
+				    std::get<0>(key),
 				    "] given '",
 				    waitMessageToString(dataType),
 				    "':'",
 				    data,
 				    "' ");
 
+				Log::Debug("data, ",data);
 				std::get<0>(key)->body = data;
 				Log::Debug("Set Body");
 				waitingList.erase(key);
@@ -217,12 +218,11 @@ void Server::checkGiveClient(const WaitMessage dataType, const std::string& data
 
 			} else if(std::holds_alternative<crow::websocket::connection*>(
 				      key)) { // websocket
-				Log::Debug("Check Give Client Call For "
-					   "WEBSOCKET_CONNECTION pointer");
+				Log::Debug(
+				    "Check Give Client Call For WEBSOCKET_CONNECTION");
 				std::get<1>(key)->send_text(
-				    std::string(R"({"type": ")") +
-				    waitMessageToString(dataType) + R"(", "message": ")" +
-				    data + R"("})");
+				    R"({"type": ")" + waitMessageToString(dataType) +
+				    R"(", "message": ")" + data + R"("})");
 				waitingList.erase(key);
 
 				Log::Info(
@@ -302,7 +302,12 @@ void Server::enablePlayerClientWebsocket() {
 						     getVaildCommands.begin(),
 						     getVaildCommands.end(),
 						     type) != getVaildCommands.end()) {
-				    Info("Got code response '", message, "'");
+				    Info(
+					"Got code|vaildgetcommand response '",
+					type,
+					"': '",
+					message,
+					"'");
 				    checkGiveClient(stringToWaitMessage(type), message);
 			    } else if(type == "info") {
 				    Info("Info From Player Client '", message, "'");
@@ -627,13 +632,13 @@ HTML Sandbox to test everything (source is not compressed so you can inspect it)
 	curl -#vikLd '{"command": "location.href=location.href"}' -H "Content-Type: application/json" "http://localhost:8080/code"
 
 
-/command/getRepeatStatus              (pending repair don't use)
-/command/getIsCurrentLiked            (pending repair don't use)
-/command/getIsPlaying                 (pending repair don't use)
-/command/getInfo                      (pending repair don't use)
-/command/getCurrentSong               (pending repair don't use)
-/command/getCurrentSongAlbumArt       (pending repair don't use)
-/command/getCurrentSongArtist         (pending repair don't use)
+/command/getRepeatStatus
+/command/getIsCurrentLiked
+/command/getIsPlaying
+/command/getInfo
+/command/getCurrentSong
+/command/getCurrentSongAlbumArt
+/command/getCurrentSongArtist
 
 /command/play
 /command/pause
@@ -652,13 +657,13 @@ HTML Sandbox to test everything (source is not compressed so you can inspect it)
 /command/toggleShuffle
 
 Examples
-	curl "http://localhost:8080/command/getRepeatStatus"              (pending repair don't use)
-	curl "http://localhost:8080/command/getIsCurrentLiked"            (pending repair don't use)
-	curl "http://localhost:8080/command/getIsPlaying"                 (pending repair don't use)
-	curl "http://localhost:8080/command/getInfo"                      (pending repair don't use)
-	curl "http://localhost:8080/command/getCurrentSong"               (pending repair don't use)
-	curl "http://localhost:8080/command/getCurrentSongAlbumArt"       (pending repair don't use)
-	curl "http://localhost:8080/command/getCurrentSongArtist"         (pending repair don't use)
+	curl "http://localhost:8080/command/getRepeatStatus"
+	curl "http://localhost:8080/command/getIsCurrentLiked"
+	curl "http://localhost:8080/command/getIsPlaying"
+	curl "http://localhost:8080/command/getInfo"
+	curl "http://localhost:8080/command/getCurrentSong"
+	curl "http://localhost:8080/command/getCurrentSongAlbumArt"
+	curl "http://localhost:8080/command/getCurrentSongArtist"
 
 	curl "http://localhost:8080/command/play"
 	curl "http://localhost:8080/command/pause"
