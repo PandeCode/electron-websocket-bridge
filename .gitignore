@@ -1,15 +1,9 @@
-typings
-
 tags
 tags.lock
 tags.temp
 
-gui/Debug
-gui/Release
-gui/.cache
-gui/.gdb_history
-
-server/Debug
-server/Release
-server/.cache
-server/.gdb_history
+main/compile_commands.json
+main/Debug
+main/Release
+main/.cache
+main/.gdb_history
