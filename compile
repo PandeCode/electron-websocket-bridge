@@ -13,9 +13,9 @@ compileClient() {
 }
 
 case "$1" in
-	"open" | "openSpotifyHack.ts") compileOpen ;;
+	"o" | "open" | "openSpotifyHack.ts" | "./injectionScripts/openSpotifyHack.ts" | "injectionScripts/openSpotifyHack.ts" ) compileOpen ;;
 
-	"spotify" | "spotifyHack.ts") compileClient ;;
+	"s" | "spotify" | "spotifyHack.ts" | "./injectionScripts/spotifyHack.ts" | "injectionScripts/spotifyHack.ts" ) compileClient ;;
 
 	*)
 		echo Compiling Both
