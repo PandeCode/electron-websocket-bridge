@@ -27,10 +27,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
 
+message("MAIN PROJECT")
+
 find_package(Threads REQUIRED)
 message("CMAKE_THREAD_LIBS_INIT : " ${CMAKE_THREAD_LIBS_INIT})
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
+
 include(cotire)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/server)
