@@ -245,4 +245,4 @@ const Hackify = {
 	},
 };
 
-Hackify.startListening();
+console.log("Hackify.startListening();");
