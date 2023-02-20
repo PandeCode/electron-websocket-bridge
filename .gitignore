@@ -7,3 +7,5 @@ main/Debug
 main/Release
 main/.cache
 main/.gdb_history
+node_modules
+pnpm-lock.yaml
