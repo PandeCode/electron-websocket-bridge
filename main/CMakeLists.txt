@@ -38,4 +38,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 include(cotire)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/server)
-add_subdirectory(${CMAKE_SOURCE_DIR}/gui)
+
+if (BUILD_GUI)
+	add_subdirectory(${CMAKE_SOURCE_DIR}/gui)
+endif()
